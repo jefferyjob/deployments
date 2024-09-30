@@ -58,13 +58,12 @@ if [[ "$AuthMethod" != "pwd" && "$AuthMethod" != "key" && "$AuthMethod" != "skip
   exit 1
 fi
 
-# 检查参数2
+# 检查执行动作
 Action="$2"
 if [[ "$Action" != "deploy" && "$Action" != "remove" ]]; then
   echo "Error: Action parameter validation error."
   exit 1
 fi
-
 
 echo "Server authorization method: $AuthMethod"
 echo "Server deployment method: $Action"
@@ -95,6 +94,12 @@ if [[ "$AuthMethod" == "key" ]]; then
   check_param "SERVER_IP" "$SERVER_IP"
   check_param "SERVER_USER" "$SERVER_USER"
   check_param "SSH_PRIVATE_KEY" "$SSH_PRIVATE_KEY"
+fi
+
+# DOCKER_REGISTRY_URL 被配置了则 DOCKER_USERNAME 和 DOCKER_PASSWORD 必须被配置
+if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD") ]]; then
+    echo "Error: In the environment variables, DOCKER_USERNAME and DOCKER_PASSWORD cannot be empty when setting DOCKER_REGISTRY_URL."
+    exit 1
 fi
 
 echo "----------------------------------------------------------------------"
