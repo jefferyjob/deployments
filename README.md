@@ -17,11 +17,27 @@
 ### 环境变量配置
 
 ```bash
+# Docker 账号
+DOCKER_USERNAME: "example_docker_username"
+DOCKER_PASSWORD: "example_docker_password"
+DOCKER_REGISTRY_URL: ""
+# Docker 服务
+DOCKER_IMAGE: "example_namespace/image"
+CONTAINER_NAME: "example_container"
+# Docker 启动参数参数
+DOCKER_APP_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
+# 服务器
+SERVER_IP: "example_host"
+SERVER_USER: "example_server_user"
+SSH_PRIVATE_KEY: "example_ssh_private_key"
 ```
 
 ### 脚本运行
 
 ```bash
+curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+chmod +x deploy.sh
+./deploy.sh
 ```
 
 
