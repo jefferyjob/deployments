@@ -113,7 +113,6 @@ deploy_key_server() {
 deploy_pwd_server() {
   echo "执行远程服务器部署流程..."
 
-  # shellcheck disable=SC2087
   sshpass -p "$SERVER_PWD" ssh -t -o StrictHostKeyChecking=no \
     "$SERVER_USER@$SERVER_IP" \
     "export DOCKER_USERNAME='$DOCKER_USERNAME'; \
