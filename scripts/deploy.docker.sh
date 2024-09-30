@@ -38,13 +38,6 @@ ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   # 输出Docker定义的环境变量
   print_docker_env
 
-  echo "----------------------------------------------------------------------"
-  echo "DOCKER_IMAGE: $DOCKER_IMAGE"
-  echo "CONTAINER_NAME: $CONTAINER_NAME"
-  echo "DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
-  echo "----------------------------------------------------------------------"
-
-
   # 备份现有的容器和镜像
   HAS_BACKUP_IMAGE=false
   if sudo docker inspect $CONTAINER_NAME > /dev/null 2>&1; then
