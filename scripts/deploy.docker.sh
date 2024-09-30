@@ -1,21 +1,25 @@
 #!/bin/bash
 set -e
+AuthMethod="$1"
+Action="$2"
 
-######################################################################
-# 输出部分环境变量信息
-######################################################################
 print_env() {
-  echo "----------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------"
+  echo "  CD Deployments < Startup parameter output >"
+  echo "--------------------------------------------------------------------------"
   echo "  SERVER_IP: $SERVER_IP"
   echo "  SERVER_USER: $SERVER_USER"
-  echo "----------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
   echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
-  echo "----------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
-  echo "----------------------------------------------------------------------"
+  echo "--------------------------------------------------------------------------"
+  echo " authMethod: $AuthMethod"
+  echo " action: $Action"
+  echo "--------------------------------------------------------------------------"
 }
 
 print_env
@@ -51,15 +55,13 @@ if [ "$#" -lt 2 ]; then
   exit 1
 fi
 
-# 服务器授权方式
-AuthMethod="$1"
+# 检查服务器授权方式
 if [[ "$AuthMethod" != "pwd" && "$AuthMethod" != "key" && "$AuthMethod" != "skip" ]]; then
   echo "Error: AuthMethod parameter validation error."
   exit 1
 fi
 
 # 检查执行动作
-Action="$2"
 if [[ "$Action" != "deploy" && "$Action" != "remove" ]]; then
   echo "Error: Action parameter validation error."
   exit 1
@@ -102,14 +104,15 @@ if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWOR
     exit 1
 fi
 
-echo "----------------------------------------------------------------------"
-echo "所有参数均已验证完毕，准备继续执行..."
-echo "----------------------------------------------------------------------"
+echo "--------------------------------------------------------------------------"
+echo "All parameters have been validated and are ready to continue execution... "
+echo "--------------------------------------------------------------------------"
 
 
 
 ######################################################################
 # Docker 服务部署
+######################################################################
 deploy_key_server() {
   local action_func="$1"
 
