@@ -2,10 +2,23 @@
 # 确保脚本遇到错误时退出
 set -e
 
-echo "----------------------------------------------------------------------"
-echo "SERVER_IP: $SERVER_IP"
-echo "SERVER_USER: $SERVER_USER"
-echo "----------------------------------------------------------------------"
+print_server_env() {
+  echo "------------------------------------------------------------"
+  echo "  SERVER_IP: $SERVER_IP"
+  echo "  SERVER_USER: $SERVER_USER"
+  echo "------------------------------------------------------------"
+}
+
+print_docker_env() {
+  echo "------------------------------------------------------------"
+  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
+  echo "------------------------------------------------------------"
+}
+
+print_server_env
 
 # 启动 SSH 代理并添加私钥
 eval "$(ssh-agent -s)"
@@ -18,6 +31,8 @@ ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 # shellcheck disable=SC2087
 ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e
+  $(declare -f)
+  print_docker_env
 
   echo "----------------------------------------------------------------------"
   echo "DOCKER_IMAGE: $DOCKER_IMAGE"
