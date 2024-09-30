@@ -16,7 +16,7 @@ chmod 700 ~/.ssh
 ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 
 # 服务器Docker容器
-ssh "$SERVER_USER"@"$SERVER_IP" <<"EOF"
+ssh -o SendEnv=DOCKER_IMAGE,CONTAINER_NAME,DOCKER_APP_PARAMS "$SERVER_USER"@"$SERVER_IP" <<"EOF"
   # 确保脚本遇到错误时退出
   set -e
   # 切换到root用户
