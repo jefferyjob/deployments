@@ -17,8 +17,8 @@ print_env() {
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
   echo "--------------------------------------------------------------------------"
-  echo " authMethod: $AuthMethod"
-  echo " action: $Action"
+  echo "  AuthMethod: $AuthMethod"
+  echo "  Action: $Action"
   echo "--------------------------------------------------------------------------"
 }
 
@@ -66,10 +66,6 @@ if [[ "$Action" != "deploy" && "$Action" != "remove" ]]; then
   echo "Error: Action parameter validation error."
   exit 1
 fi
-
-echo "Server authorization method: $AuthMethod"
-echo "Server deployment method: $Action"
-
 
 check_param() {
   local param_name="$1"
