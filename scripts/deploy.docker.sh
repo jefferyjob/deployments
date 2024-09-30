@@ -203,7 +203,7 @@ deploy_new_container() {
   echo "容器启动参数: DOCKER_IMAGE: $DOCKER_IMAGE、 CONTAINER_NAME: $CONTAINER_NAME、 DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
 
   # shellcheck disable=SC2086
-  if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_APP_PARAMS "$DOCKER_IMAGE":latest; then
+  if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_APP_PARAMS $DOCKER_IMAGE:latest; then
     echo "无法启动新容器，回滚到上一个版本."
     echo "错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
     deploy_rollback
@@ -221,7 +221,8 @@ deploy_rollback() {
     exit 1
   fi
 
-  if sudo docker run -d --name "$CONTAINER_NAME" "$DOCKER_APP_PARAMS" "$DOCKER_IMAGE":backup; then
+  # shellcheck disable=SC2086
+  if sudo docker run -d --name $CONTAINER_NAME $DOCKER_APP_PARAMS $DOCKER_IMAGE:backup; then
     echo "镜像回滚成功"
     exit 1
   else
