@@ -17,6 +17,13 @@ ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 
 # 服务器Docker容器
 ssh -o SendEnv=DOCKER_IMAGE,CONTAINER_NAME,DOCKER_APP_PARAMS "$SERVER_USER"@"$SERVER_IP" <<"EOF"
+
+  echo "内部----------------------------------------------------------"
+  echo "DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "CONTAINER_NAME: $CONTAINER_NAME"
+  echo "DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
+  echo "----------------------------------------------------------"
+
   # 确保脚本遇到错误时退出
   set -e
   # 切换到root用户
