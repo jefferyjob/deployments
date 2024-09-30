@@ -10,6 +10,7 @@ print_env() {
   echo "  SERVER_USER: $SERVER_USER"
   echo "----------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
   echo "----------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
@@ -173,7 +174,7 @@ deploy_login_docker() {
   fi
 
   echo "登陆Docker镜像仓库..."
-  sudo docker login --username="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD" "$DOCKER_REGISTRY_URL"
+  echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
 }
 
 # 退出登陆Docker镜像仓库

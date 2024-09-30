@@ -19,7 +19,7 @@
 # Docker 账号
 DOCKER_USERNAME: "example_docker_username"
 DOCKER_PASSWORD: "example_docker_password"
-DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1 
+DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1
 # Docker 服务
 DOCKER_IMAGE: "example_namespace/image"
 CONTAINER_NAME: "example_container"
