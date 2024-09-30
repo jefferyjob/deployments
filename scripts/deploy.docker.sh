@@ -10,6 +10,7 @@ print_env() {
   echo "  SERVER_USER: $SERVER_USER"
   echo "----------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "----------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
@@ -25,21 +26,26 @@ print_env
 # Shell 脚本运行参数验证
 ######################################################################
 print_usage() {
-  echo "Usage: $0 <authMethod>"
+  echo "Usage: $0 <authMethod> <action>"
   echo ""
   echo "Parameters:"
   echo "  <authMethod>    Authorization method to access the server."
+  echo "  <action>        Action to perform on the Docker service."
   echo ""
   echo "Valid values for <authMethod> are:"
   echo "  pwd       Use password-based authentication."
   echo "  key       Use key-based authentication."
   echo "  skip      Skip server authentication."
   echo ""
+  echo "Valid values for <action> are:"
+  echo "  deploy    Deploy the Docker service."
+  echo "  remove    Remove the Docker service."
+  echo ""
   exit 1
 }
 
 # 检查是否提供了足够的参数
-if [ "$#" -lt 1 ]; then
+if [ "$#" -lt 2 ]; then
   print_usage
   exit 1
 fi
@@ -51,7 +57,16 @@ if [[ "$AuthMethod" != "pwd" && "$AuthMethod" != "key" && "$AuthMethod" != "skip
   exit 1
 fi
 
+# 检查参数2
+Action="$2"
+if [[ "$Action" != "deploy" && "$Action" != "remove" ]]; then
+  echo "Error: Action parameter validation error."
+  exit 1
+fi
+
+
 echo "Server authorization method: $AuthMethod"
+echo "Server deployment method: $Action"
 
 
 check_param() {
@@ -81,17 +96,18 @@ if [[ "$AuthMethod" == "key" ]]; then
   check_param "SSH_PRIVATE_KEY" "$SSH_PRIVATE_KEY"
 fi
 
+echo "----------------------------------------------------------------------"
 echo "所有参数均已验证完毕，准备继续执行..."
-
+echo "----------------------------------------------------------------------"
 
 
 
 ######################################################################
 # Docker 服务部署
-######################################################################
-
 deploy_key_server() {
-  echo "启动 SSH 代理并添加私钥..."
+  local action_func="$1"
+
+  echo "启动SSH代理并添加私钥..."
   eval "$(ssh-agent -s)"
   echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   mkdir -p ~/.ssh
@@ -107,10 +123,12 @@ deploy_key_server() {
     export DOCKER_IMAGE='$DOCKER_IMAGE'; \
     export CONTAINER_NAME='$CONTAINER_NAME'; \
     export DOCKER_APP_PARAMS='$DOCKER_APP_PARAMS'; \
-    $(typeset -f); deploy_server"
+    $(typeset -f); $action_func"
 }
 
 deploy_pwd_server() {
+  local action_func="$1"
+
   echo "执行远程服务器部署流程..."
 
   sshpass -p "$SERVER_PWD" ssh -t -o StrictHostKeyChecking=no \
@@ -121,7 +139,7 @@ deploy_pwd_server() {
     export DOCKER_IMAGE='$DOCKER_IMAGE'; \
     export CONTAINER_NAME='$CONTAINER_NAME'; \
     export DOCKER_APP_PARAMS='$DOCKER_APP_PARAMS'; \
-    $(typeset -f); deploy_server"
+    $(typeset -f); $action_func"
 }
 
 
@@ -154,7 +172,7 @@ deploy_login_docker() {
     return
   fi
 
-  echo "登陆私有Docker镜像仓库..."
+  echo "登陆Docker镜像仓库..."
   sudo docker login --username="$DOCKER_USERNAME" --password="$DOCKER_PASSWORD" "$DOCKER_REGISTRY_URL"
 }
 
@@ -164,8 +182,8 @@ deploy_logout_docker() {
     return
   fi
 
-  echo "退出登陆私有Docker镜像仓库..."
-  sudo docker logout
+  echo "退出登陆Docker镜像仓库..."
+  sudo docker logout "$DOCKER_REGISTRY_URL"
 }
 
 # 备份现有的容器
@@ -175,9 +193,9 @@ deploy_backup_container() {
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     sudo docker commit "$CONTAINER_NAME" "$DOCKER_IMAGE":backup
     HAS_BACKUP_IMAGE=true
-    echo "备份现有的镜像: $CONTAINER_NAME => ${DOCKER_IMAGE}:backup"
+    echo "备份现有的镜像: <$CONTAINER_NAME> ======> <$DOCKER_IMAGE:backup>"
   else
-    echo "没有可备份的镜像"
+    echo "没有可备份的镜像, Not found docker container <$CONTAINER_NAME>"
   fi
 }
 
@@ -199,8 +217,6 @@ deploy_new_container() {
   echo "Docker镜像拉取成功 "
 
   echo "启动新容器..."
-  echo "容器启动参数: DOCKER_IMAGE: $DOCKER_IMAGE、 CONTAINER_NAME: $CONTAINER_NAME、 DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
-
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_APP_PARAMS $DOCKER_IMAGE:latest; then
     echo "无法启动新容器，回滚到上一个版本."
@@ -215,7 +231,7 @@ deploy_new_container() {
 deploy_rollback() {
   echo "镜像回滚..."
 
-  if [ "$HAS_BACKUP_IMAGE" != true ]; then
+  if [[ "$HAS_BACKUP_IMAGE" != true ]]; then
     echo "没有备份镜像，无法回滚"
     exit 1
   fi
@@ -243,13 +259,26 @@ deploy_cleanup() {
 ######################################################################
 case $AuthMethod in
   key) # 密钥登陆服务器
-    deploy_key_server
+    if [[ "$Action" == "deploy" ]]; then
+      deploy_key_server deploy_server
+    else
+      deploy_key_server deploy_stop_container
+    fi
+
     ;;
   pwd) # 账号密码登陆服务器
-    deploy_pwd_server
+    if [[ "$Action" == "deploy" ]]; then
+      deploy_pwd_server deploy_server
+    else
+      deploy_pwd_server deploy_stop_container
+    fi
     ;;
   skip) # 跳过服务器认证，直接部署
-    deploy_server
+    if [[ "$Action" == "deploy" ]]; then
+      deploy_server
+    else
+      deploy_stop_container
+    fi
     ;;
   *)
     echo "authMethod invalid failed"
@@ -261,5 +290,5 @@ esac
 ######################################################################
 # 成功
 ######################################################################
-echo "🚀🚀🚀 部署成功"
+echo "🚀🚀🚀 CD Deploy 自动化脚本执行成功"
 
