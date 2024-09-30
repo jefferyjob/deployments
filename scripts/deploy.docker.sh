@@ -31,7 +31,11 @@ ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 # shellcheck disable=SC2087
 ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e
+
+  # 将本地函数传递到远程服务器
   $(declare -f)
+
+  # 输出Docker定义的环境变量
   print_docker_env
 
   echo "----------------------------------------------------------------------"
