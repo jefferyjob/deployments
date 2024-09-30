@@ -7,13 +7,6 @@ echo "SERVER_IP: $SERVER_IP"
 echo "SERVER_USER: $SERVER_USER"
 echo "----------------------------------------------------------------------"
 
-# 启动 SSH 代理并添加私钥
-eval "$(ssh-agent -s)"
-echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-mkdir -p ~/.ssh
-chmod 700 ~/.ssh
-ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
-
 # 服务器Docker容器
 # shellcheck disable=SC2087
 sshpass -p "$SERVER_PWD" ssh -o StrictHostKeyChecking=no "$SERVER_USER"@"$SERVER_IP" <<EOF
