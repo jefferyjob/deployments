@@ -17,7 +17,7 @@ ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 
 # 服务器Docker容器
 # shellcheck disable=SC2087
-ssh "$SERVER_USER"@"$SERVER_IP" DOCKER_IMAGE="$DOCKER_IMAGE" CONTAINER_NAME="$CONTAINER_NAME" DOCKER_APP_PARAMS="$DOCKER_APP_PARAMS" <<EOF
+ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
 
   echo "内部----------------------------------------------------------"
   echo "DOCKER_IMAGE: $DOCKER_IMAGE"
