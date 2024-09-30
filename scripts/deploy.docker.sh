@@ -57,7 +57,7 @@ ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   }
 
   # 如果存在则停止并删除现有容器
-  sudo docker stop “$CONTAINER_NAME” || true
+  sudo docker stop "$CONTAINER_NAME" || true
   sudo docker rm "$CONTAINER_NAME" || true
 
   # 拉取最新的 Docker 镜像
