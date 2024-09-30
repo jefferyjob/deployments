@@ -174,7 +174,7 @@ deploy_login_docker() {
   fi
 
   echo "登陆Docker镜像仓库..."
-  echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
+  echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
 }
 
 # 退出登陆Docker镜像仓库
@@ -184,7 +184,7 @@ deploy_logout_docker() {
   fi
 
   echo "退出登陆Docker镜像仓库..."
-  sudo docker logout "$DOCKER_REGISTRY_URL"
+  sudo docker logout "$DOCKER_REGISTRY_URL" || true
 }
 
 # 备份现有的容器
