@@ -174,7 +174,7 @@ deploy_login_docker() {
   fi
 
   echo "登陆Docker镜像仓库..."
-  echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin
+  echo "$DOCKER_PASSWORD" | docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
 }
 
 # 退出登陆Docker镜像仓库
