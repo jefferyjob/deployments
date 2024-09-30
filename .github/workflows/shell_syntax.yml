@@ -1,0 +1,42 @@
+name: Shell Syntax
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+env:
+  # Docker 账号
+  DOCKER_USERNAME: "example_docker_username"
+  DOCKER_PASSWORD: "example_docker_password"
+  DOCKER_REGISTRY_URL: ""
+  # Docker 服务
+  DOCKER_IMAGE: "example_namespace/image"
+  CONTAINER_NAME: "example_container"
+  # Docker 启动参数参数
+  DOCKER_APP_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
+  # 服务器
+  SERVER_IP: "example_host"
+  SERVER_USER: "example_server_user"
+  SERVER_PWD: "example_pwd"
+  SSH_PRIVATE_KEY: "example_ssh_private_key"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up ShellCheck
+        run: sudo apt-get install -y shellcheck
+
+      - name: Find and check shell scripts
+        run: |
+          # Find all shell scripts and check them with shellcheck
+          find . -name "*.sh" -print0 | xargs -0 shellcheck

@@ -1,4 +1,7 @@
-# editor
 .idea
-.vscode
+.project
 .DS_Store
+.vscode
+.fleet
+*.log
+test
