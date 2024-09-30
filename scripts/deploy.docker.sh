@@ -2,6 +2,12 @@
 # 确保脚本遇到错误时退出
 set -e
 
+echo "----------------------------------------------------------"
+echo "DOCKER_IMAGE: $DOCKER_IMAGE"
+echo "CONTAINER_NAME: $CONTAINER_NAME"
+echo "DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
+echo "----------------------------------------------------------"
+
 # 启动 SSH 代理并添加私钥
 eval "$(ssh-agent -s)"
 echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
