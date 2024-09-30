@@ -2,22 +2,24 @@
 # 确保脚本遇到错误时退出
 set -e
 
-echo "----------------------------------------------------------------------"
-echo "SERVER_IP: $SERVER_IP"
-echo "SERVER_USER: $SERVER_USER"
-echo "----------------------------------------------------------------------"
+print_env() {
+  echo "----------------------------------------------------------------------"
+  echo "  SERVER_IP: $SERVER_IP"
+  echo "  SERVER_USER: $SERVER_USER"
+  echo "----------------------------------------------------------------------"
+  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
+  echo "----------------------------------------------------------------------"
+}
+
+print_env
 
 # 部署Docker容器
 # shellcheck disable=SC2087
 sshpass -p "$SERVER_PWD" ssh -t -o StrictHostKeyChecking=no "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e
-
-  echo "----------------------------------------------------------------------"
-  echo "DOCKER_IMAGE: $DOCKER_IMAGE"
-  echo "CONTAINER_NAME: $CONTAINER_NAME"
-  echo "DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
-  echo "----------------------------------------------------------------------"
-
 
   # 备份现有的容器和镜像
   HAS_BACKUP_IMAGE=false
