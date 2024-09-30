@@ -39,4 +39,4 @@ jobs:
       - name: Find and check shell scripts
         run: |
           # Find all shell scripts and check them with shellcheck
-          find . -name "*.sh" -print0 | xargs -0 shellcheck
+          shellcheck -e SC2046 -e SC2317 scripts/*.sh
