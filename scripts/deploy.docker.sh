@@ -14,7 +14,7 @@ mkdir -p ~/.ssh
 chmod 700 ~/.ssh
 ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
 
-# 服务器Docker容器
+# 部署Docker容器
 # shellcheck disable=SC2087
 ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e

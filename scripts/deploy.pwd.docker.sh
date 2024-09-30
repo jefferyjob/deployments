@@ -7,7 +7,7 @@ echo "SERVER_IP: $SERVER_IP"
 echo "SERVER_USER: $SERVER_USER"
 echo "----------------------------------------------------------------------"
 
-# 服务器Docker容器
+# 部署Docker容器
 # shellcheck disable=SC2087
 sshpass -p "$SERVER_PWD" ssh -o StrictHostKeyChecking=no "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e
