@@ -53,7 +53,7 @@ ssh "$SERVER_USER"@"$SERVER_IP" <<"EOF"
   docker rm "$CONTAINER_NAME" || true
 
   # 拉取最新的 Docker 镜像
-  if ! docker pull $DOCKER_IMAGE:latest; then
+  if ! docker pull "$DOCKER_IMAGE":latest; then
     echo "拉取新镜像失败，回滚到上一个版本."
 
     CMD_ROLL_BACK
