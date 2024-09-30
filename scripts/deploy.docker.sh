@@ -25,6 +25,7 @@ ssh "$SERVER_USER"@"$SERVER_IP" <<EOF
   echo "DOCKER_APP_PARAMS: $DOCKER_APP_PARAMS"
   echo "----------------------------------------------------------"
 
+
   # 确保脚本遇到错误时退出
   set -e
   # 切换到root用户
