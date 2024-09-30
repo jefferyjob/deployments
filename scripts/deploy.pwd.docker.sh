@@ -2,14 +2,10 @@
 # 确保脚本遇到错误时退出
 set -e
 
-print_server_env() {
+print_env() {
   echo "----------------------------------------------------------------------"
   echo "  SERVER_IP: $SERVER_IP"
   echo "  SERVER_USER: $SERVER_USER"
-  echo "----------------------------------------------------------------------"
-}
-
-print_docker_env() {
   echo "----------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
@@ -18,18 +14,12 @@ print_docker_env() {
   echo "----------------------------------------------------------------------"
 }
 
-print_server_env
+print_env
 
 # 部署Docker容器
 # shellcheck disable=SC2087
 sshpass -p "$SERVER_PWD" ssh -t -o StrictHostKeyChecking=no "$SERVER_USER"@"$SERVER_IP" <<EOF
   set -e
-
-  # 将本地函数传递到远程服务器
-  $(declare -f)
-
-  # 输出Docker定义的环境变量
-  print_docker_env
 
   # 备份现有的容器和镜像
   HAS_BACKUP_IMAGE=false
