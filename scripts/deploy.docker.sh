@@ -117,13 +117,11 @@ deploy_key_server() {
 
   echo "执行远程服务器部署流程..."
 
+  # 读取本机环境变量
+  ENV_VARS=$(export_env_vars)
+
   ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
-    "export DOCKER_USERNAME='$DOCKER_USERNAME'; \
-    export DOCKER_PASSWORD='$DOCKER_PASSWORD'; \
-    export DOCKER_REGISTRY_URL='$DOCKER_REGISTRY_URL'; \
-    export DOCKER_IMAGE='$DOCKER_IMAGE'; \
-    export CONTAINER_NAME='$CONTAINER_NAME'; \
-    export DOCKER_APP_PARAMS='$DOCKER_APP_PARAMS'; \
+    "$ENV_VARS
     $(typeset -f); $action_func"
 }
 
@@ -132,14 +130,12 @@ deploy_pwd_server() {
 
   echo "执行远程服务器部署流程..."
 
+  # 读取本机环境变量
+  ENV_VARS=$(export_env_vars)
+
   sshpass -p "$SERVER_PWD" ssh -t -o StrictHostKeyChecking=no \
     "$SERVER_USER@$SERVER_IP" \
-    "export DOCKER_USERNAME='$DOCKER_USERNAME'; \
-    export DOCKER_PASSWORD='$DOCKER_PASSWORD'; \
-    export DOCKER_REGISTRY_URL='$DOCKER_REGISTRY_URL'; \
-    export DOCKER_IMAGE='$DOCKER_IMAGE'; \
-    export CONTAINER_NAME='$CONTAINER_NAME'; \
-    export DOCKER_APP_PARAMS='$DOCKER_APP_PARAMS'; \
+    "$ENV_VARS
     $(typeset -f); $action_func"
 }
 
@@ -165,6 +161,18 @@ deploy_server() {
 
   # 如果部署成功，删除备份镜像并清理系统
   deploy_cleanup
+}
+
+# 读取并导出所需的环境变量
+export_env_vars() {
+  echo "
+  export DOCKER_USERNAME='$DOCKER_USERNAME'; \
+  export DOCKER_PASSWORD='$DOCKER_PASSWORD'; \
+  export DOCKER_REGISTRY_URL='$DOCKER_REGISTRY_URL'; \
+  export DOCKER_IMAGE='$DOCKER_IMAGE'; \
+  export CONTAINER_NAME='$CONTAINER_NAME'; \
+  export DOCKER_APP_PARAMS='$DOCKER_APP_PARAMS'; \
+  "
 }
 
 # 登陆Docker镜像仓库
