@@ -33,6 +33,12 @@ SSH_PRIVATE_KEY: "example_ssh_private_key"
 
 ### 脚本运行
 
+方法1: 不下载直接运行部署脚本
+```bash
+curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <authMethod> <action>
+```
+
+方法2:  下载后运行部署脚本（推荐）
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
