@@ -127,6 +127,13 @@ deploy_key_server() {
   ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
     "$ENV_VARS
     $(typeset -f); $action_func"
+
+  # 捕获 SSH 命令的退出状态
+  if [[ $? -ne 0 ]]; then
+    echo "远程服务器部署失败"
+    exit 1
+  fi
+  echo "远程服务器部署成功"
 }
 
 deploy_pwd_server() {
@@ -141,6 +148,13 @@ deploy_pwd_server() {
     "$SERVER_USER@$SERVER_IP" \
     "$ENV_VARS
     $(typeset -f); $action_func"
+
+  # 捕获 SSH 命令的退出状态
+  if [[ $? -ne 0 ]]; then
+    echo "远程服务器部署失败"
+    exit 1
+  fi
+  echo "远程服务器部署成功"
 }
 
 
