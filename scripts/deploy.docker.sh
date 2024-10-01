@@ -124,16 +124,25 @@ deploy_key_server() {
   # 读取本机环境变量
   ENV_VARS=$(export_env_vars)
 
-  ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
-    "$ENV_VARS
-    $(typeset -f); $action_func"
+#  ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
+#    "$ENV_VARS
+#    $(typeset -f); $action_func"
+#
+#  # 捕获 SSH 命令的退出状态
+#  # shellcheck disable=SC2181
+#  if [[ $? -ne 0 ]]; then
+#    echo "远程服务器部署失败"
+#    exit 1
+#  fi
 
-  # 捕获 SSH 命令的退出状态
-  # shellcheck disable=SC2181
-  if [[ $? -ne 0 ]]; then
-    echo "远程服务器部署失败"
+  if ! ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
+      "$ENV_VARS
+      $(typeset -f); $action_func"; then
+    echo "远程部署失败"
     exit 1
   fi
+
+
   echo "远程服务器部署成功"
 }
 
@@ -156,6 +165,7 @@ deploy_pwd_server() {
     echo "远程服务器部署失败"
     exit 1
   fi
+
   echo "远程服务器部署成功"
 }
 
