@@ -37,17 +37,19 @@ SSH_PRIVATE_KEY: "example_ssh_private_key"
 
 ### Running the Script
 
-方法1: 不下载直接运行部署脚本
+Method 1: Run the deployment script directly without downloading
 ```bash
 curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <authMethod> <action>
 ```
 
-方法2:  下载后运行部署脚本（推荐）
+Method 2: Run the deployment script after downloading (recommended)
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
 ./deploy.sh <authMethod> <action>
 ```
+
+**Tips:** This demonstrates downloading through the main branch. In actual configuration, it is recommended to download through the version tag.
 
 ### Parameters
 authMethod
