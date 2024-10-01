@@ -129,6 +129,7 @@ deploy_key_server() {
     $(typeset -f); $action_func"
 
   # 捕获 SSH 命令的退出状态
+  # shellcheck disable=SC2181
   if [[ $? -ne 0 ]]; then
     echo "远程服务器部署失败"
     exit 1
@@ -150,6 +151,7 @@ deploy_pwd_server() {
     $(typeset -f); $action_func"
 
   # 捕获 SSH 命令的退出状态
+  # shellcheck disable=SC2181
   if [[ $? -ne 0 ]]; then
     echo "远程服务器部署失败"
     exit 1
