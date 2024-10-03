@@ -101,9 +101,24 @@ print_env() {
   echo "--------------------------------------------------------------------------"
   echo "  SERVER_HOST: $SERVER_HOST"
   echo "  SERVER_USER: $SERVER_USER"
+  if [ -n "$SERVER_PASSWORD" ]; then
+    echo "  SERVER_PASSWORD: ******"
+  else
+    echo "  SERVER_PASSWORD: "
+  fi
+  if [ -n "$SERVER_SSH_PRIVATE_KEY" ]; then
+    echo "  SERVER_SSH_PRIVATE_KEY: ******"
+  else
+    echo "  SERVER_SSH_PRIVATE_KEY: "
+  fi
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
   echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
+  if [ -n "$DOCKER_PASSWORD" ]; then
+    echo "  DOCKER_PASSWORD: ******"
+  else
+    echo "  DOCKER_PASSWORD: "
+  fi
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
