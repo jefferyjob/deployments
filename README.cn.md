@@ -28,25 +28,25 @@ DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1
 DOCKER_IMAGE: "example_namespace/image"
 # Docker 容器启动配置
 CONTAINER_NAME: "example_container"
-DOCKER_APP_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
+DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
 # 服务器
 SERVER_IP: "example_host"
 SERVER_USER: "example_server_user"
-SSH_PRIVATE_KEY: "example_ssh_private_key"
+SERVER_SSH_PRIVATE_KEY: "example_ssh_private_key"
 ```
 
 ### 脚本运行
 
 方法1: 不下载直接运行部署脚本
 ```bash
-curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <authMethod> <action>
+curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
 
 方法2:  下载后运行部署脚本（推荐）
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
-./deploy.sh <authMethod> <action>
+./deploy.sh <AUTH_METHOD> <ACTION>
 ```
 
 **Tips:** 此处演示通过main分支下载，实际配置中建议通过版本Tag下载。
