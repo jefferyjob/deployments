@@ -13,6 +13,7 @@ env:
   DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
   # Docker 镜像地址
   DOCKER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/example_namespace/example_image"
+  DOCKER_IMAGE_TAG: ""
   # Docker 容器启动配置
   CONTAINER_NAME: "example_container"
   DOCKER_RUN_PARAMS: "-p 91:80 -e APP_ENV=example"

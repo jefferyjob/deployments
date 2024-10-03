@@ -87,6 +87,9 @@ if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWOR
     exit 1
 fi
 
+# 判断 DOCKER_IMAGE_TAG 是否为空，如果为空则赋值为 "latest"
+: "${DOCKER_IMAGE_TAG:="latest"}"
+
 
 echo "--------------------------------------------------------------------------"
 echo "All parameters have been validated and are ready to continue execution... "
@@ -98,11 +101,27 @@ print_env() {
   echo "--------------------------------------------------------------------------"
   echo "  SERVER_HOST: $SERVER_HOST"
   echo "  SERVER_USER: $SERVER_USER"
+  if [ -n "$SERVER_PASSWORD" ]; then
+    echo "  SERVER_PASSWORD: ******"
+  else
+    echo "  SERVER_PASSWORD: "
+  fi
+  if [ -n "$SERVER_SSH_PRIVATE_KEY" ]; then
+    echo "  SERVER_SSH_PRIVATE_KEY: ******"
+  else
+    echo "  SERVER_SSH_PRIVATE_KEY: "
+  fi
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
   echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
+  if [ -n "$DOCKER_PASSWORD" ]; then
+    echo "  DOCKER_PASSWORD: ******"
+  else
+    echo "  DOCKER_PASSWORD: "
+  fi
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
   echo "--------------------------------------------------------------------------"
@@ -180,6 +199,7 @@ export_env_vars() {
   export DOCKER_PASSWORD='$DOCKER_PASSWORD'; \
   export DOCKER_REGISTRY_URL='$DOCKER_REGISTRY_URL'; \
   export DOCKER_IMAGE='$DOCKER_IMAGE'; \
+  export DOCKER_IMAGE_TAG='$DOCKER_IMAGE_TAG'; \
   export CONTAINER_NAME='$CONTAINER_NAME'; \
   export DOCKER_RUN_PARAMS='$DOCKER_RUN_PARAMS'; \
   "
@@ -215,9 +235,9 @@ deploy_backup_container() {
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     sudo docker commit "$CONTAINER_NAME" "$DOCKER_IMAGE":backup
     BACKUP_IMAGE_EXISTS=1
-    echo "备份现有的镜像: <$CONTAINER_NAME> ======> <$DOCKER_IMAGE:backup>"
+    echo "备份现有的镜像: <container name: $CONTAINER_NAME> ---> <backup container name: $DOCKER_IMAGE:backup>"
   else
-    echo "没有可备份的镜像, Not found docker container <$CONTAINER_NAME>"
+    echo "没有可备份的镜像, Not found docker container name: $CONTAINER_NAME"
   fi
 }
 
@@ -231,7 +251,7 @@ deploy_stop_container() {
 # 拉取最新镜像并部署新容器
 deploy_new_container() {
   echo "拉取最新镜像..."
-  if ! sudo docker pull "$DOCKER_IMAGE":latest; then
+  if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
     echo "拉取新镜像失败，回滚到上一个版本."
     deploy_rollback
   fi
@@ -239,7 +259,7 @@ deploy_new_container() {
   echo "启动新容器..."
 
   # shellcheck disable=SC2086
-  if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:latest; then
+  if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
     echo "无法启动新容器，回滚到上一个版本."
     echo "错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
     deploy_rollback
