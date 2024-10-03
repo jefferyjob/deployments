@@ -17,29 +17,18 @@
 ## 使用方法
 
 ### 环境变量配置
-- **DOCKER_USERNAME**: [可选] Docker账号，用于拉取私有镜像
-- **DOCKER_PASSWORD**: [可选] Docker密码，配合 `DOCKER_USERNAME` 使用
-- **DOCKER_REGISTRY_URL**: [可选] Docker 私有镜像仓库的 URL，示例：`https://index.docker.io/v1` 。如果为空，则默认使用 Docker Hub
-- **DOCKER_IMAGE**: [必需] 要部署的 Docker 镜像地址，包括镜像名称和标签，示例：`example_namespace/myapp`
-- **DOCKER_IMAGE_TAG**: [可选] 要部署的 Docker 镜像版本标签，默认为 `latest`。示例值包括：`latest`、`v1.0.0`
-- **CONTAINER_NAME**: [必需] 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器
-- **DOCKER_RUN_PARAMS**: [可选] 启动容器时需要传递的环境变量或其他运行参数
-- **SERVER_HOST**: [必需] 远程服务器主机名或 IP 地址，用于服务器连接
-- **SERVER_USER**: [必需] 服务器登录用户名，确保该用户有 Docker 操作权限
-- **SERVER_PASSWORD**: [可选] 服务器登录密码，仅在 `AUTH_METHOD` 为 pwd 时使用
-- **SERVER_SSH_PRIVATE_KEY**: [可选] SSH 私钥，用于无密码登录服务器，仅在 `AUTH_METHOD` 为 key 时使用
 
 | 变量名                    | 是否必须 | 描述                                                         |
-|------------------------|------|------------------------------------------------------------|
-| DOCKER_USERNAME        | 否    | Docker 账号，用于拉取私有镜像                                     |
+|------------------------|-----|------------------------------------------------------------|
+| DOCKER_IMAGE           | 是   | 要部署的 Docker 镜像地址，包括镜像名称和标签，示例：`example_namespace/myapp` |
+| CONTAINER_NAME         | 是   | 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器               |
+| SERVER_HOST            | 是   | 远程服务器主机名或 IP 地址，用于服务器连接                          |
+| SERVER_USER            | 是   | 服务器登录用户名，确保该用户有 Docker 操作权限                      |
+| DOCKER_USERNAME        | 否   | Docker 账号，用于拉取私有镜像                                     |
 | DOCKER_PASSWORD        | 否   | Docker 密码，配合 `DOCKER_USERNAME` 使用                       |
 | DOCKER_REGISTRY_URL    | 否   | Docker 私有镜像仓库的 URL，示例：`https://index.docker.io/v1` 。如果为空，则默认使用 Docker Hub |
-| DOCKER_IMAGE           | 是    | 要部署的 Docker 镜像地址，包括镜像名称和标签，示例：`example_namespace/myapp` |
 | DOCKER_IMAGE_TAG       | 否   | 要部署的 Docker 镜像版本标签，默认为 `latest`。示例值包括：`latest`、`v1.0.0` |
-| CONTAINER_NAME         | 是    | 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器               |
 | DOCKER_RUN_PARAMS      | 否   | 启动容器时需要传递的环境变量或其他运行参数                           |
-| SERVER_HOST            | 是    | 远程服务器主机名或 IP 地址，用于服务器连接                          |
-| SERVER_USER            | 是    | 服务器登录用户名，确保该用户有 Docker 操作权限                      |
 | SERVER_PASSWORD        | 否   | 服务器登录密码，仅在 `AUTH_METHOD` 为 pwd 时使用                    |
 | SERVER_SSH_PRIVATE_KEY | 否   | SSH 私钥，用于无密码登录服务器，仅在 `AUTH_METHOD` 为 key 时使用      |
 
