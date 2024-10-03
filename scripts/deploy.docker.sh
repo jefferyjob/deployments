@@ -3,33 +3,6 @@ set -e
 AUTH_METHOD="$1"
 ACTION="$2"
 
-print_env() {
-  echo "--------------------------------------------------------------------------"
-  echo "  CD Deployment < Startup Parameters >"
-  echo "--------------------------------------------------------------------------"
-  echo "  SERVER_IP: $SERVER_IP"
-  echo "  SERVER_USER: $SERVER_USER"
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
-  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
-  echo "  CONTAINER_NAME: $CONTAINER_NAME"
-  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
-  echo "--------------------------------------------------------------------------"
-  echo "  AUTH_METHOD: $AUTH_METHOD"
-  echo "  ACTION: $ACTION"
-  echo "--------------------------------------------------------------------------"
-}
-
-print_env
-
-
-
-
-######################################################################
-# Shell 脚本运行参数验证
-######################################################################
 print_usage() {
   echo "Usage: $0 <AUTH_METHOD> <ACTION>"
   echo ""
@@ -49,6 +22,20 @@ print_usage() {
   exit 1
 }
 
+if [[ "$ACTION" == "--help" ]]; then
+  print_usage
+  exit 0
+fi
+
+if [[ "$ACTION" == "--dry-run" ]]; then
+  echo "Dry run: No actions will be performed."
+  exit 0
+fi
+
+
+######################################################################
+# Shell 脚本运行参数验证
+######################################################################
 # 检查是否提供了足够的参数
 if [ "$#" -lt 2 ]; then
   print_usage
@@ -100,11 +87,30 @@ if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWOR
     exit 1
 fi
 
+
 echo "--------------------------------------------------------------------------"
 echo "All parameters have been validated and are ready to continue execution... "
 echo "--------------------------------------------------------------------------"
 
-
+print_env() {
+  echo "--------------------------------------------------------------------------"
+  echo "  CD Deployment < Startup Parameters >"
+  echo "--------------------------------------------------------------------------"
+  echo "  SERVER_IP: $SERVER_IP"
+  echo "  SERVER_USER: $SERVER_USER"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
+  echo "--------------------------------------------------------------------------"
+  echo "  AUTH_METHOD: $AUTH_METHOD"
+  echo "  ACTION: $ACTION"
+  echo "--------------------------------------------------------------------------"
+}
+print_env
 
 ######################################################################
 # Docker 服务部署
