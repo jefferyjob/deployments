@@ -7,33 +7,26 @@ This project is a simple CD (Continuous Deployment) automated deployment script 
 
 ## Requirements
 - Linux operating system
-- Docker must be installed on the operating system, and image acceleration configured
-- SSH access permission or password access permission, and ensure the provided account has root privileges
-- Pipeline environment variables are configured
+- The Docker software of the operating system has been installed, and image acceleration has been configured
+- SSH access rights or account and password access rights, and ensure that the provided account has Docker operation permissions
+- The pipeline has configured environment variables
 
 ## Notes
 - Before deployment, ensure that your Docker image has already been pushed to the remote image repository during the CI phase.
-- If you want to pull images from a private repository, you must configure `DOCKER_REGISTRY_URL`, `DOCKER_USERNAME`, and `DOCKER_PASSWORD`.
 
 ## Usage
 
 ### Environment Variables Configuration
-
-```bash
-# Docker Account
-DOCKER_USERNAME: "example_docker_username"
-DOCKER_PASSWORD: "example_docker_password"
-DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1
-# Docker Image Address
-DOCKER_IMAGE: "example_namespace/image"
-# Docker Container Startup Configuration
-CONTAINER_NAME: "example_container"
-DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
-# Server
-SERVER_IP: "example_host"
-SERVER_USER: "example_server_user"
-SERVER_SSH_PRIVATE_KEY: "example_ssh_private_key"
-```
+- **DOCKER_USERNAME**: [Optional] Docker account, used to pull private images
+- **DOCKER_PASSWORD**: [Optional] Docker password, used with `DOCKER_USERNAME`
+- **DOCKER_REGISTRY_URL**: [Optional] Example: https://index.docker.io/v1 Docker private image repository URL (if empty, Docker Hub is used by default)
+- **DOCKER_IMAGE**: [Required] Docker image address to deploy, including image name and tag (for example: example_namespace/myapp)
+- **CONTAINER_NAME**: [Required] Docker container name to deploy, used to uniquely identify the container in Docker
+- **DOCKER_RUN_PARAMS**: [Optional] Environment variables or other runtime parameters that need to be passed when starting the container
+- **SERVER_HOST**: [Required] Remote server host name or IP address, used for server connection
+- **SERVER_USER**: [Required] Server login username, make sure the user has Docker operation permissions
+- **SERVER_PASSWORD**: [Optional] Server login password, only used when `AUTH_METHOD` is pwd
+- **SERVER_SSH_PRIVATE_KEY**: [Optional] SSH private key, used to log in to the server without a password, only used when `AUTH_METHOD` is key
 
 ### Running the Script
 
