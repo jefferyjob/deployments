@@ -70,13 +70,13 @@ check_param "DOCKER_IMAGE" "$DOCKER_IMAGE"
 check_param "CONTAINER_NAME" "$CONTAINER_NAME"
 
 if [[ "$AUTH_METHOD" == "pwd" ]]; then
-  check_param "SERVER_IP" "$SERVER_IP"
+  check_param "SERVER_HOST" "$SERVER_HOST"
   check_param "SERVER_USER" "$SERVER_USER"
   check_param "SERVER_PASSWORD" "$SERVER_PASSWORD"
 fi
 
 if [[ "$AUTH_METHOD" == "key" ]]; then
-  check_param "SERVER_IP" "$SERVER_IP"
+  check_param "SERVER_HOST" "$SERVER_HOST"
   check_param "SERVER_USER" "$SERVER_USER"
   check_param "SERVER_SSH_PRIVATE_KEY" "$SERVER_SSH_PRIVATE_KEY"
 fi
@@ -96,7 +96,7 @@ print_env() {
   echo "--------------------------------------------------------------------------"
   echo "  CD Deployment < Startup Parameters >"
   echo "--------------------------------------------------------------------------"
-  echo "  SERVER_IP: $SERVER_IP"
+  echo "  SERVER_HOST: $SERVER_HOST"
   echo "  SERVER_USER: $SERVER_USER"
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
@@ -123,14 +123,14 @@ deploy_key_server() {
   echo "$SERVER_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
-  ssh-keyscan -H "$SERVER_IP" >> ~/.ssh/known_hosts
+  ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
   echo "执行远程服务器部署流程..."
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
 
-  ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_IP" \
+  ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_HOST" \
     "$EXPORTED_ENV_VARS
     $(typeset -f); $action_func"
 }
@@ -144,7 +144,7 @@ deploy_pwd_server() {
   EXPORTED_ENV_VARS=$(export_env_vars)
 
   sshpass -p "$SERVER_PASSWORD" ssh -t -o StrictHostKeyChecking=no \
-    "$SERVER_USER@$SERVER_IP" \
+    "$SERVER_USER@$SERVER_HOST" \
     "$EXPORTED_ENV_VARS
     $(typeset -f); $action_func"
 }

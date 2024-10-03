@@ -8,32 +8,26 @@
 ## 环境要求
 - Linux 操作系统
 - 操作系统的 Docker 软件已安装, 并且配置了镜像加速
-- SSH访问权限或账号密码访问权限且确保提供的账户具备root操作权限
+- SSH访问权限或账号密码访问权限, 且确保提供的账户具备Docker操作权限
 - 流水线已配置环境变量
 
 ## 注意事项
 - 部署前请确保你的 Docker 镜像已经 CI 阶段推送到远程镜像仓库中。
-- 如果要拉取私有镜像仓库必须配置 `DOCKER_REGISTRY_URL`、`DOCKER_USERNAME`、`DOCKER_PASSWORD`。
 
 ## 使用方法
 
 ### 环境变量配置
+- **DOCKER_USERNAME**: [可选] Docker账号，用于拉取私有镜像
+- **DOCKER_PASSWORD**: [可选] Docker密码，配合 `DOCKER_USERNAME` 使用
+- **DOCKER_REGISTRY_URL**: [可选] 示例: https://index.docker.io/v1 Docker私有镜像仓库 URL（为空则默认使用 Docker Hub）
+- **DOCKER_IMAGE**: [必需] 要部署的 Docker 镜像地址，包括镜像名称和标签（例如：example_namespace/myapp）
+- **CONTAINER_NAME**: [必需] 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器
+- **DOCKER_RUN_PARAMS**: [可选] 启动容器时需要传递的环境变量或其他运行参数
+- **SERVER_HOST**: [必需] 远程服务器主机名或 IP 地址，用于服务器连接
+- **SERVER_USER**: [必需] 服务器登录用户名，确保该用户有 Docker 操作权限
+- **SERVER_PASSWORD**: [可选] 服务器登录密码，仅在 `AUTH_METHOD` 为 pwd 时使用
+- **SERVER_SSH_PRIVATE_KEY**: [可选] SSH 私钥，用于无密码登录服务器，仅在 `AUTH_METHOD` 为 key 时使用
 
-```bash
-# Docker 账号
-DOCKER_USERNAME: "example_docker_username"
-DOCKER_PASSWORD: "example_docker_password"
-DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1
-# Docker 镜像地址
-DOCKER_IMAGE: "example_namespace/image"
-# Docker 容器启动配置
-CONTAINER_NAME: "example_container"
-DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
-# 服务器
-SERVER_IP: "example_host"
-SERVER_USER: "example_server_user"
-SERVER_SSH_PRIVATE_KEY: "example_ssh_private_key"
-```
 
 ### 脚本运行
 
