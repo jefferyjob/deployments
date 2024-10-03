@@ -17,17 +17,16 @@ This project is a simple CD (Continuous Deployment) automated deployment script 
 ## Usage
 
 ### Environment Variables Configuration
-
-- DOCKER_USERNAME: [Optional] Docker account, used to pull private images
-- DOCKER_PASSWORD: [Optional] Docker password, used with `DOCKER_USERNAME`
-- DOCKER_REGISTRY_URL: [Optional] Example: https://index.docker.io/v1 Docker private image repository URL (if empty, Docker Hub is used by default)
-- DOCKER_IMAGE: [Required] The Docker image address to be deployed, including the image name and tag (for example: myapp:latest)
-- CONTAINER_NAME: [Required] The name of the Docker container to be deployed, used to uniquely identify the container in Docker
-- DOCKER_RUN_PARAMS: [Optional] Environment variables or other running parameters that need to be passed when starting the container
-- SERVER_HOST: [Required] The remote server host name or IP address, used for server connection
-- SERVER_USER: [Required] The server login username, make sure the user has Docker operation permissions
-- SERVER_PASSWORD: [optional] Server login password, only used when `AUTH_METHOD` is pwd
-- SERVER_SSH_PRIVATE_KEY: [optional] SSH private key, used to log in to the server without a password, only used when `AUTH_METHOD` is key
+- **DOCKER_USERNAME**: [Optional] Docker account, used to pull private images
+- **DOCKER_PASSWORD**: [Optional] Docker password, used with `DOCKER_USERNAME`
+- **DOCKER_REGISTRY_URL**: [Optional] Example: https://index.docker.io/v1 Docker private image repository URL (if empty, Docker Hub is used by default)
+- **DOCKER_IMAGE**: [Required] Docker image address to deploy, including image name and tag (for example: myapp:latest)
+- **CONTAINER_NAME**: [Required] Docker container name to deploy, used to uniquely identify the container in Docker
+- **DOCKER_RUN_PARAMS**: [Optional] Environment variables or other runtime parameters that need to be passed when starting the container
+- **SERVER_HOST**: [Required] Remote server host name or IP address, used for server connection
+- **SERVER_USER**: [Required] Server login username, make sure the user has Docker operation permissions
+- **SERVER_PASSWORD**: [Optional] Server login password, only used when `AUTH_METHOD` is pwd
+- **SERVER_SSH_PRIVATE_KEY**: [Optional] SSH private key, used to log in to the server without a password, only used when `AUTH_METHOD` is key
 
 ### Running the Script
 
