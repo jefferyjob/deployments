@@ -17,7 +17,7 @@ env:
   CONTAINER_NAME: "example_container"
   DOCKER_RUN_PARAMS: "-p 91:80 -e APP_ENV=example"
   # 服务器
-  SERVER_IP: ${{ secrets.SERVER_IP }}
+  SERVER_HOST: ${{ secrets.SERVER_HOST }}
   SERVER_USER: ${{ secrets.SERVER_USER }}
   SERVER_SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
