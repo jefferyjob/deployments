@@ -32,6 +32,7 @@ This project is a simple CD (Continuous Deployment) automated deployment script 
 | SERVER_PASSWORD | No | Server login password, only used when `AUTH_METHOD` is pwd |
 | SERVER_SSH_PRIVATE_KEY | No | SSH private key, used for password-free login to the server, only used when `AUTH_METHOD` is key |
 
+
 ### Running the Script
 
 Method 1: Run the deployment script directly without downloading
