@@ -192,7 +192,10 @@ deploy_login_docker() {
   fi
 
   echo "登陆Docker镜像仓库..."
-  echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
+  if ! echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"; then
+    echo "Error: Docker登陆镜像仓库失败"
+    exit 1
+  fi
 }
 
 # 退出登陆Docker镜像仓库
@@ -233,14 +236,23 @@ deploy_new_container() {
     deploy_rollback
   fi
 
-  echo "Docker镜像拉取成功 "
-
   echo "启动新容器..."
+
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:latest; then
     echo "无法启动新容器，回滚到上一个版本."
     echo "错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
     deploy_rollback
+  fi
+
+  echo "容器健康状态检查..."
+
+  # 检查容器健康状态
+  HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
+  echo "容器状态: $HEALTH_STATUS"
+  if [ "$HEALTH_STATUS" != "running" ]; then
+      echo "容器未启动成功. Status: $HEALTH_STATUS"
+      deploy_rollback
   fi
 
   echo "Docker镜像部署成功"
