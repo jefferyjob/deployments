@@ -211,10 +211,10 @@ deploy_logout_docker() {
 # 备份现有的容器
 deploy_backup_container() {
   echo "备份现有容器..."
-  BACKUP_IMAGE_EXISTS=false
+  BACKUP_IMAGE_EXISTS=0
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     sudo docker commit "$CONTAINER_NAME" "$DOCKER_IMAGE":backup
-    BACKUP_IMAGE_EXISTS=true
+    BACKUP_IMAGE_EXISTS=1
     echo "备份现有的镜像: <$CONTAINER_NAME> ======> <$DOCKER_IMAGE:backup>"
   else
     echo "没有可备份的镜像, Not found docker container <$CONTAINER_NAME>"
@@ -262,7 +262,7 @@ deploy_new_container() {
 deploy_rollback() {
   echo "镜像回滚..."
 
-  if [[ "$BACKUP_IMAGE_EXISTS" != true ]]; then
+  if [[ "$BACKUP_IMAGE_EXISTS" == 0 ]]; then
     echo "没有备份镜像，无法回滚"
     exit 1
   fi
