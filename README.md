@@ -20,7 +20,7 @@ This project is a simple CD (Continuous Deployment) automated deployment script 
 - **DOCKER_USERNAME**: [Optional] Docker account, used to pull private images
 - **DOCKER_PASSWORD**: [Optional] Docker password, used with `DOCKER_USERNAME`
 - **DOCKER_REGISTRY_URL**: [Optional] Example: https://index.docker.io/v1 Docker private image repository URL (if empty, Docker Hub is used by default)
-- **DOCKER_IMAGE**: [Required] Docker image address to deploy, including image name and tag (for example: myapp:latest)
+- **DOCKER_IMAGE**: [Required] Docker image address to deploy, including image name and tag (for example: example_namespace/myapp)
 - **CONTAINER_NAME**: [Required] Docker container name to deploy, used to uniquely identify the container in Docker
 - **DOCKER_RUN_PARAMS**: [Optional] Environment variables or other runtime parameters that need to be passed when starting the container
 - **SERVER_HOST**: [Required] Remote server host name or IP address, used for server connection

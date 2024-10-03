@@ -20,7 +20,7 @@
 - **DOCKER_USERNAME**: [可选] Docker账号，用于拉取私有镜像
 - **DOCKER_PASSWORD**: [可选] Docker密码，配合 `DOCKER_USERNAME` 使用
 - **DOCKER_REGISTRY_URL**: [可选] 示例: https://index.docker.io/v1 Docker私有镜像仓库 URL（为空则默认使用 Docker Hub）
-- **DOCKER_IMAGE**: [必需] 要部署的 Docker 镜像地址，包括镜像名称和标签（例如：myapp:latest）
+- **DOCKER_IMAGE**: [必需] 要部署的 Docker 镜像地址，包括镜像名称和标签（例如：example_namespace/myapp）
 - **CONTAINER_NAME**: [必需] 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器
 - **DOCKER_RUN_PARAMS**: [可选] 启动容器时需要传递的环境变量或其他运行参数
 - **SERVER_HOST**: [必需] 远程服务器主机名或 IP 地址，用于服务器连接

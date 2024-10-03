@@ -10,16 +10,12 @@ on:
       - main
 
 env:
-  # Docker 账号
   DOCKER_USERNAME: "example_docker_username"
   DOCKER_PASSWORD: "example_docker_password"
   DOCKER_REGISTRY_URL: ""
-  # Docker 服务
   DOCKER_IMAGE: "example_namespace/image"
   CONTAINER_NAME: "example_container"
-  # Docker 启动参数参数
   DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
-  # 服务器
   SERVER_HOST: "example_host"
   SERVER_USER: "example_server_user"
   SERVER_PASSWORD: "example_pwd"
