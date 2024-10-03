@@ -28,25 +28,25 @@ DOCKER_REGISTRY_URL: "" # Demo: https://index.docker.io/v1
 DOCKER_IMAGE: "example_namespace/image"
 # Docker Container Startup Configuration
 CONTAINER_NAME: "example_container"
-DOCKER_APP_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
+DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
 # Server
 SERVER_IP: "example_host"
 SERVER_USER: "example_server_user"
-SSH_PRIVATE_KEY: "example_ssh_private_key"
+SERVER_SSH_PRIVATE_KEY: "example_ssh_private_key"
 ```
 
 ### Running the Script
 
 Method 1: Run the deployment script directly without downloading
 ```bash
-curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <authMethod> <action>
+curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
 
 Method 2: Run the deployment script after downloading (recommended)
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
-./deploy.sh <authMethod> <action>
+./deploy.sh <AUTH_METHOD> <ACTION>
 ```
 
 **Tips:** This demonstrates downloading through the main branch. In actual configuration, it is recommended to download through the version tag.
