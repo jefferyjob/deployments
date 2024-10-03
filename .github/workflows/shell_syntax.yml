@@ -14,6 +14,7 @@ env:
   DOCKER_PASSWORD: "example_docker_password"
   DOCKER_REGISTRY_URL: ""
   DOCKER_IMAGE: "example_namespace/image"
+  DOCKER_IMAGE_TAG: ""
   CONTAINER_NAME: "example_container"
   DOCKER_RUN_PARAMS: "-e KEY1=VAL1 -e KEY2=VAL2"
   SERVER_HOST: "example_host"
