@@ -32,6 +32,30 @@ if [[ "$ACTION" == "--dry-run" ]]; then
   exit 0
 fi
 
+print_env() {
+  echo "--------------------------------------------------------------------------"
+  echo "  CD Deployment < Initialization Parameters >"
+  echo "--------------------------------------------------------------------------"
+  echo "  SERVER_HOST: $SERVER_HOST"
+  echo "  SERVER_USER: $SERVER_USER"
+  [[ -n "$SERVER_PASSWORD" ]] && echo "SERVER_PASSWORD: ******"
+  [[ -n "$SERVER_SSH_PRIVATE_KEY" ]] && echo "SERVER_SSH_PRIVATE_KEY: ******"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
+  [[ -n "$DOCKER_PASSWORD" ]] && echo "DOCKER_PASSWORD: ******"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
+  echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
+  echo "--------------------------------------------------------------------------"
+  echo "  AUTH_METHOD: $AUTH_METHOD"
+  echo "  ACTION: $ACTION"
+  echo "--------------------------------------------------------------------------"
+}
+print_env
+
 
 ######################################################################
 # Shell 脚本运行参数验证
@@ -94,30 +118,6 @@ fi
 echo "--------------------------------------------------------------------------"
 echo "All parameters have been validated and are ready to continue execution... "
 echo "--------------------------------------------------------------------------"
-
-print_env() {
-  echo "--------------------------------------------------------------------------"
-  echo "  CD Deployment < Startup Parameters >"
-  echo "--------------------------------------------------------------------------"
-  echo "  SERVER_HOST: $SERVER_HOST"
-  echo "  SERVER_USER: $SERVER_USER"
-  [[ -n "$SERVER_PASSWORD" ]] && echo "SERVER_PASSWORD: ******"
-  [[ -n "$SERVER_SSH_PRIVATE_KEY" ]] && echo "SERVER_SSH_PRIVATE_KEY: ******"
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
-  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
-  [[ -n "$DOCKER_PASSWORD" ]] && echo "DOCKER_PASSWORD: ******"
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
-  echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
-  echo "  CONTAINER_NAME: $CONTAINER_NAME"
-  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
-  echo "--------------------------------------------------------------------------"
-  echo "  AUTH_METHOD: $AUTH_METHOD"
-  echo "  ACTION: $ACTION"
-  echo "--------------------------------------------------------------------------"
-}
-print_env
 
 ######################################################################
 # Docker 服务部署
