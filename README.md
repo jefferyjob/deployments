@@ -3,7 +3,7 @@
 English | [简体中文](README.cn.md)
 
 ## Introduction
-This project is a simple CD (Continuous Deployment) automated deployment script project, used to connect to a remote server via SSH for Docker container backup, update, and rollback operations. The goal of this project is to simplify the application deployment process on the server and ensure automatic rollback to the previous version in case of any failure, guaranteeing service availability.
+This project is a neat CD (Continuous Deployment) automated deployment script designed for connecting to remote servers via SSH. It can efficiently perform operations such as backup, update, rollback and failure recovery of Docker containers. The project aims to simplify the application deployment process and ensure automatic rollback to the previous stable version when a failure occurs, thereby ensuring the stability and high availability of services. By using this script, users can not only improve their work efficiency, but also significantly reduce the risk of errors caused by manual operations.
 
 ## Requirements
 - Linux operating system
