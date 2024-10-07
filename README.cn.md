@@ -49,13 +49,13 @@ chmod +x deploy.sh
 
 **Tips:** 此处演示通过main分支下载，实际配置中建议通过版本Tag下载。
 
-### 参数
-authMethod
+#### 参数
+AUTH_METHOD
 - pwd: 使用密码进行身份验证。
 - key: 使用密钥进行身份验证。
 - skip: 跳过服务器身份验证。
 
-action
+ACTION
 - deploy: 部署 Docker 服务。
 - remove: 移除 Docker 服务。
 

@@ -49,13 +49,13 @@ chmod +x deploy.sh
 
 **Tips:** This demonstrates downloading through the main branch. In actual configuration, it is recommended to download through the version tag.
 
-### Parameters
-authMethod
+#### Parameters
+AUTH_METHOD
 - pwd: Use password-based authentication.
 - key: Use key-based authentication.
 - skip: Skip server authentication.
 
-action
+ACTION
 - deploy: Deploy the Docker service.
 - remove: Remove the Docker service.
 
