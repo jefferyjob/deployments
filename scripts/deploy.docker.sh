@@ -224,7 +224,7 @@ deploy_backup_container() {
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     sudo docker commit "$CONTAINER_NAME" "$DOCKER_IMAGE":backup
     BACKUP_IMAGE_EXISTS=1
-    echo "备份现有的镜像: <container name: $CONTAINER_NAME> ---> <backup container name: $DOCKER_IMAGE:backup>"
+    echo "备份现有的镜像, 容器名称: $CONTAINER_NAME  -->  备份镜像名称: $DOCKER_IMAGE:backup"
   else
     echo "没有可备份的镜像, Not found docker container name: $CONTAINER_NAME"
   fi
