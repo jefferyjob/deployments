@@ -18,20 +18,19 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 
 ### Environment Variables Configuration
 
-| Variable name | Required | Description |
-|------------------------|-----|------------------------------------------------------------|
-| DOCKER_IMAGE | Yes | Docker image address to be deployed, including image name and tag, example: `example_namespace/myapp` |
-| CONTAINER_NAME | Yes | Docker container name to be deployed, used to uniquely identify the container in Docker |
-| SERVER_HOST | Yes | Remote server host name or IP address, used for server connection |
-| SERVER_USER | Yes | Server login username, ensure that the user has Docker operation permissions |
-| DOCKER_USERNAME | No | Docker account, used to pull private images |
-| DOCKER_PASSWORD | No | Docker password, used with `DOCKER_USERNAME` |
-| DOCKER_REGISTRY_URL | No | URL of Docker private image repository URL, example: `https://index.docker.io/v1`. If empty, Docker Hub is used by default |
-| DOCKER_IMAGE_TAG | No | Docker image version tag to deploy, defaults to `latest`. Example values include: `latest`, `v1.0.0` |
-| DOCKER_RUN_PARAMS | No | Environment variables or other run parameters that need to be passed when starting the container |
-| SERVER_PASSWORD | No | Server login password, only used when `AUTH_METHOD` is pwd |
-| SERVER_SSH_PRIVATE_KEY | No | SSH private key, used for password-free login to the server, only used when `AUTH_METHOD` is key |
-
+| Variable Name | Required | Description |
+|------------------------|-----|-----------------------------------------------------------------------------------|
+| DOCKER_IMAGE | Yes | Docker image address, including image name and tag (e.g., `example_namespace/myapp`), used to pull and start the specified application container. |
+| CONTAINER_NAME | Yes | Docker container name (e.g., `my_container`), uniquely identifies the container in Docker to ensure that it does not conflict with other containers. |
+| SERVER_HOST | Yes | The host name or IP address of the remote server (e.g., `192.168.1.100`), used to connect to the target server via SSH. |
+| SERVER_USER | Yes | Server login username (e.g., `root`), ensure that the user has the permission to operate Docker. |
+| DOCKER_USERNAME | No | Docker repository login account (e.g. `mydockeruser`), used to pull images from private image repositories. |
+| DOCKER_PASSWORD | No | Docker repository login password (e.g. `secret_password`), used with `DOCKER_USERNAME` for private image authentication. |
+| DOCKER_REGISTRY_URL | No | Docker repository URL (e.g. `https://index.docker.io/v1`), if empty, Docker Hub is used by default. |
+| DOCKER_IMAGE_TAG | No | Image version tag to deploy (e.g. `latest`), defaults to `latest`, used to specify the version of the Docker image. |
+| DOCKER_RUN_PARAMS | No | Additional run parameters passed when starting the container (e.g. `-e ENV=prod`), which can include environment variables, port mappings, etc. |
+| SERVER_PASSWORD | No | Server login password (e.g., `mypassword`), only used when `AUTH_METHOD` is `pwd`. |
+| SERVER_SSH_PRIVATE_KEY | No | SSH private key content (e.g., `-----BEGIN PRIVATE KEY-----`), used for key login to the server, only used when `AUTH_METHOD` is `key`. |
 
 ### Running the Script
 

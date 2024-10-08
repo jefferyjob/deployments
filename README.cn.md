@@ -18,19 +18,19 @@
 
 ### 环境变量配置
 
-| 变量名                    | 是否必须 | 描述                                                         |
-|------------------------|-----|------------------------------------------------------------|
-| DOCKER_IMAGE           | 是   | 要部署的 Docker 镜像地址，包括镜像名称和标签，示例：`example_namespace/myapp` |
-| CONTAINER_NAME         | 是   | 要部署的 Docker 容器名称，用于在 Docker 中唯一标识该容器               |
-| SERVER_HOST            | 是   | 远程服务器主机名或 IP 地址，用于服务器连接                          |
-| SERVER_USER            | 是   | 服务器登录用户名，确保该用户有 Docker 操作权限                      |
-| DOCKER_USERNAME        | 否   | Docker 账号，用于拉取私有镜像                                     |
-| DOCKER_PASSWORD        | 否   | Docker 密码，配合 `DOCKER_USERNAME` 使用                       |
-| DOCKER_REGISTRY_URL    | 否   | Docker 私有镜像仓库的 URL，示例：`https://index.docker.io/v1` 。如果为空，则默认使用 Docker Hub |
-| DOCKER_IMAGE_TAG       | 否   | 要部署的 Docker 镜像版本标签，默认为 `latest`。示例值包括：`latest`、`v1.0.0` |
-| DOCKER_RUN_PARAMS      | 否   | 启动容器时需要传递的环境变量或其他运行参数                           |
-| SERVER_PASSWORD        | 否   | 服务器登录密码，仅在 `AUTH_METHOD` 为 pwd 时使用                    |
-| SERVER_SSH_PRIVATE_KEY | 否   | SSH 私钥，用于无密码登录服务器，仅在 `AUTH_METHOD` 为 key 时使用      |
+| 变量名                    | 是否必须 | 描述                                                                                |
+|------------------------|-----|-----------------------------------------------------------------------------------|
+| DOCKER_IMAGE           | 是   | Docker 镜像地址，包括镜像名称和标签（如：`example_namespace/myapp`），用于拉取并启动指定的应用容器。                |
+| CONTAINER_NAME         | 是   | Docker 容器名称（如：`my_container`），在 Docker 中唯一标识该容器，确保不与其他容器冲突。                       |
+| SERVER_HOST            | 是   | 远程服务器的主机名或 IP 地址（如：`192.168.1.100`），用于通过 SSH 连接到目标服务器。                            |
+| SERVER_USER            | 是   | 服务器登录用户名（如：`root`），确保该用户具备操作 Docker 的权限。                                          |
+| DOCKER_USERNAME        | 否   | Docker 仓库的登录账号（如：`mydockeruser`），用于从私有镜像仓库中拉取镜像。                                  |
+| DOCKER_PASSWORD        | 否   | Docker 仓库的登录密码（如：`secret_password`），配合 `DOCKER_USERNAME` 使用，用于私有镜像的认证。            |
+| DOCKER_REGISTRY_URL    | 否   | Docker 仓库的 URL 地址（如：`https://index.docker.io/v1`）， 若为空，则默认使用 Docker Hub。          |
+| DOCKER_IMAGE_TAG       | 否   | 要部署的镜像版本标签（如：`latest`），默认为 `latest`，用于指定 Docker 镜像的版本。                            |
+| DOCKER_RUN_PARAMS      | 否   | 启动容器时传递的额外运行参数（如：`-e ENV=prod`），可以包括环境变量、端口映射等。                                   |
+| SERVER_PASSWORD        | 否   | 服务器登录密码（如：`mypassword`），仅在 `AUTH_METHOD` 为 `pwd` 时使用。                             |
+| SERVER_SSH_PRIVATE_KEY | 否   | SSH 私钥内容（如：`-----BEGIN PRIVATE KEY-----`），用于密钥登录服务器，仅在 `AUTH_METHOD` 为 `key` 时使用。 |
 
 
 ### 脚本运行
