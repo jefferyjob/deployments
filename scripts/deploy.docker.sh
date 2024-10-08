@@ -32,6 +32,31 @@ if [[ "$ACTION" == "--dry-run" ]]; then
   exit 0
 fi
 
+print_env() {
+  echo "--------------------------------------------------------------------------"
+  echo "  CD Deployment < Initialization Parameters >"
+  echo "--------------------------------------------------------------------------"
+  echo "  SERVER_HOST: $SERVER_HOST"
+  echo "  SERVER_USER: $SERVER_USER"
+  [[ -n "$SERVER_PASSWORD" ]] && echo "SERVER_PASSWORD: ******"
+  [[ -n "$SERVER_SSH_PRIVATE_KEY" ]] && echo "SERVER_SSH_PRIVATE_KEY: ******"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
+  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
+  [[ -n "$DOCKER_PASSWORD" ]] && echo "DOCKER_PASSWORD: ******"
+  echo "--------------------------------------------------------------------------"
+  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
+  echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
+  echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
+  echo "--------------------------------------------------------------------------"
+  echo "  AUTH_METHOD: $AUTH_METHOD"
+  echo "  ACTION: $ACTION"
+  echo "--------------------------------------------------------------------------"
+}
+
+print_env
+
 
 ######################################################################
 # Shell 脚本运行参数验证
@@ -83,7 +108,7 @@ fi
 
 # DOCKER_REGISTRY_URL 被配置了则 DOCKER_USERNAME 和 DOCKER_PASSWORD 必须被配置
 if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD") ]]; then
-    echo "Error: In the environment variables, DOCKER_USERNAME and DOCKER_PASSWORD cannot be empty when setting DOCKER_REGISTRY_URL."
+    echo "Error: 环境变量中，设置 DOCKER_REGISTRY_URL 时 DOCKER_USERNAME 和 DOCKER_PASSWORD 不能为空"
     exit 1
 fi
 
@@ -94,42 +119,6 @@ fi
 echo "--------------------------------------------------------------------------"
 echo "All parameters have been validated and are ready to continue execution... "
 echo "--------------------------------------------------------------------------"
-
-print_env() {
-  echo "--------------------------------------------------------------------------"
-  echo "  CD Deployment < Startup Parameters >"
-  echo "--------------------------------------------------------------------------"
-  echo "  SERVER_HOST: $SERVER_HOST"
-  echo "  SERVER_USER: $SERVER_USER"
-  if [ -n "$SERVER_PASSWORD" ]; then
-    echo "  SERVER_PASSWORD: ******"
-  else
-    echo "  SERVER_PASSWORD: "
-  fi
-  if [ -n "$SERVER_SSH_PRIVATE_KEY" ]; then
-    echo "  SERVER_SSH_PRIVATE_KEY: ******"
-  else
-    echo "  SERVER_SSH_PRIVATE_KEY: "
-  fi
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
-  echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
-  if [ -n "$DOCKER_PASSWORD" ]; then
-    echo "  DOCKER_PASSWORD: ******"
-  else
-    echo "  DOCKER_PASSWORD: "
-  fi
-  echo "--------------------------------------------------------------------------"
-  echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
-  echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
-  echo "  CONTAINER_NAME: $CONTAINER_NAME"
-  echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
-  echo "--------------------------------------------------------------------------"
-  echo "  AUTH_METHOD: $AUTH_METHOD"
-  echo "  ACTION: $ACTION"
-  echo "--------------------------------------------------------------------------"
-}
-print_env
 
 ######################################################################
 # Docker 服务部署
