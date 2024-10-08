@@ -17,7 +17,6 @@
 ## 使用方法
 
 ### 环境变量配置
-
 | 变量名                    | 是否必须 | 描述                                                                                |
 |------------------------|-----|-----------------------------------------------------------------------------------|
 | DOCKER_IMAGE           | 是   | Docker 镜像地址，包括镜像名称和标签（如：`example_namespace/myapp`），用于拉取并启动指定的应用容器。                |
@@ -34,17 +33,16 @@
 
 
 ### 脚本运行
-
 方法1: 不下载直接运行部署脚本
 ```bash
-curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
+curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
 
 方法2:  下载后运行部署脚本（推荐）
 ```bash
-curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
-chmod +x deploy.sh
-./deploy.sh <AUTH_METHOD> <ACTION>
+curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+chmod +x deploy.docker.sh
+./deploy.docker.sh <AUTH_METHOD> <ACTION>
 ```
 
 **Tips:** 此处演示通过main分支下载，实际配置中建议通过版本Tag下载。
