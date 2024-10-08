@@ -51,15 +51,8 @@ chmod +x deploy.sh
 
 **Tips:** 
 - 以上示例中使用 main 分支作为下载来源，实际使用中建议通过特定的版本 Tag 下载稳定版本的脚本，以确保兼容性和稳定性。
-- 如果您在国内服务器运行，推荐使用国内镜像地址以提高下载速度。
+- 如果您在国内服务器运行，推荐使用 [国内镜像](https://gitee.com/jefferyjob/deployments) 以提高下载速度。
 
-
-**国内镜像地址示例**
-```bash
-curl -o deploy.sh https://gitee.com/jefferyjob/deployments/raw/main/scripts/deploy.docker.sh
-chmod +x deploy.sh
-./deploy.sh <AUTH_METHOD> <ACTION>
-```
 
 #### 参数
 AUTH_METHOD
