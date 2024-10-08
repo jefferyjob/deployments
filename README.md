@@ -17,7 +17,6 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 ## Usage
 
 ### Environment Variables Configuration
-
 | Variable Name | Required | Description |
 |------------------------|-----|-----------------------------------------------------------------------------------|
 | DOCKER_IMAGE | Yes | Docker image address, including image name and tag (e.g., `example_namespace/myapp`), used to pull and start the specified application container. |
@@ -33,20 +32,26 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 | SERVER_SSH_PRIVATE_KEY | No | SSH private key content (e.g., `-----BEGIN PRIVATE KEY-----`), used for key login to the server, only used when `AUTH_METHOD` is `key`. |
 
 ### Running the Script
-
-Method 1: Run the deployment script directly without downloading
+**Method 1: Run the deployment script directly without downloading**
 ```bash
-curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
+curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
+This method is suitable for temporary execution. It does not need to save the script file locally and directly passes it to bash for execution through the curl pipeline.
 
-Method 2: Run the deployment script after downloading (recommended)
+
+**Method 2: Run the deployment script after downloading (recommended)**
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
 ./deploy.sh <AUTH_METHOD> <ACTION>
 ```
+This method is more recommended. After the script file is downloaded, it can be viewed or modified and can be executed repeatedly.
 
-**Tips:** This demonstrates downloading through the main branch. In actual configuration, it is recommended to download through the version tag.
+
+**Tips:**
+- The main branch is used as the download source in the above example. In actual use, it is recommended to download the stable version of the script through a specific version tag to ensure compatibility and stability.
+- If you are running on a domestic server, it is recommended to use a [domestic mirror](https://gitee.com/jefferyjob/deployments) to increase download speed.
+
 
 #### Parameters
 AUTH_METHOD

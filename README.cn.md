@@ -17,7 +17,6 @@
 ## 使用方法
 
 ### 环境变量配置
-
 | 变量名                    | 是否必须 | 描述                                                                                |
 |------------------------|-----|-----------------------------------------------------------------------------------|
 | DOCKER_IMAGE           | 是   | Docker 镜像地址，包括镜像名称和标签（如：`example_namespace/myapp`），用于拉取并启动指定的应用容器。                |
@@ -34,20 +33,26 @@
 
 
 ### 脚本运行
-
-方法1: 不下载直接运行部署脚本
+**方法1: 不下载直接运行部署脚本**
 ```bash
-curl -s https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
+curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
+此方法适用于临时执行，不需要将脚本文件保留到本地，直接通过 curl 管道传递给 bash 执行。
 
-方法2:  下载后运行部署脚本（推荐）
+
+**方法2:  下载后运行部署脚本（推荐）**
 ```bash
 curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
 chmod +x deploy.sh
 ./deploy.sh <AUTH_METHOD> <ACTION>
 ```
+这种方式更为推荐，脚本文件被下载后可供查看或修改，并可以重复执行。
 
-**Tips:** 此处演示通过main分支下载，实际配置中建议通过版本Tag下载。
+
+**Tips:** 
+- 以上示例中使用 main 分支作为下载来源，实际使用中建议通过特定的版本 Tag 下载稳定版本的脚本，以确保兼容性和稳定性。
+- 如果您在国内服务器运行，推荐使用 [国内镜像](https://gitee.com/jefferyjob/deployments) 以提高下载速度。
+
 
 #### 参数
 AUTH_METHOD

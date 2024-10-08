@@ -38,12 +38,12 @@ print_env() {
   echo "--------------------------------------------------------------------------"
   echo "  SERVER_HOST: $SERVER_HOST"
   echo "  SERVER_USER: $SERVER_USER"
-  [[ -n "$SERVER_PASSWORD" ]] && echo "SERVER_PASSWORD: ******"
-  [[ -n "$SERVER_SSH_PRIVATE_KEY" ]] && echo "SERVER_SSH_PRIVATE_KEY: ******"
+  [[ -n "$SERVER_PASSWORD" ]] && echo "  SERVER_PASSWORD: ******"
+  [[ -n "$SERVER_SSH_PRIVATE_KEY" ]] && echo "  SERVER_SSH_PRIVATE_KEY: ******"
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_REGISTRY_URL: $DOCKER_REGISTRY_URL"
   echo "  DOCKER_USERNAME: $DOCKER_USERNAME"
-  [[ -n "$DOCKER_PASSWORD" ]] && echo "DOCKER_PASSWORD: ******"
+  [[ -n "$DOCKER_PASSWORD" ]] && echo "  DOCKER_PASSWORD: ******"
   echo "--------------------------------------------------------------------------"
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
@@ -224,7 +224,7 @@ deploy_backup_container() {
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     sudo docker commit "$CONTAINER_NAME" "$DOCKER_IMAGE":backup
     BACKUP_IMAGE_EXISTS=1
-    echo "备份现有的镜像: <container name: $CONTAINER_NAME> ---> <backup container name: $DOCKER_IMAGE:backup>"
+    echo "备份现有的镜像, 容器名称: $CONTAINER_NAME  -->  备份镜像名称: $DOCKER_IMAGE:backup"
   else
     echo "没有可备份的镜像, Not found docker container name: $CONTAINER_NAME"
   fi
