@@ -39,9 +39,9 @@ curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/m
 
 Method 2: Run the deployment script after downloading (recommended)
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
-chmod +x deploy.docker.sh
-./deploy.docker.sh <AUTH_METHOD> <ACTION>
+curl -fsSL -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+chmod +x deploy.sh
+./deploy.sh <AUTH_METHOD> <ACTION>
 ```
 
 **Tips:** This demonstrates downloading through the main branch. In actual configuration, it is recommended to download through the version tag.

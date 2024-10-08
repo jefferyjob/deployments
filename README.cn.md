@@ -40,9 +40,9 @@ curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/m
 
 方法2:  下载后运行部署脚本（推荐）
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
-chmod +x deploy.docker.sh
-./deploy.docker.sh <AUTH_METHOD> <ACTION>
+curl -fsSL -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+chmod +x deploy.sh
+./deploy.sh <AUTH_METHOD> <ACTION>
 ```
 
 **Tips:** 此处演示通过main分支下载，实际配置中建议通过版本Tag下载。
