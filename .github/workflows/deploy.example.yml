@@ -10,7 +10,7 @@ on:
 #      - main
 
 env:
-  environment: TESTING
+  ENVIRONMENT: TESTING
   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
