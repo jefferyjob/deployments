@@ -10,7 +10,6 @@ on:
 #      - main
 
 env:
-  ENVIRONMENT: TESTING
   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
@@ -25,15 +24,8 @@ env:
 jobs:
   CI-Build:
     runs-on: ubuntu-latest
-    environment: TESTING  # 指定环境
+    environment: testing  # 指定环境
     steps:
-      - name: Print Environment
-        run: |
-          echo "Deploying to ${{ env.ENVIRONMENT }} environment"
-          echo "DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}"
-          echo "DOCKER_REGISTRY_URL: ${{ env.DOCKER_REGISTRY_URL }}"
-          exit 1
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -67,6 +59,7 @@ jobs:
   CD-Deploy:
     needs: CI-Build
     runs-on: ubuntu-latest
+    environment: testing
     steps:
       - name: Deploy to server
         run: |
