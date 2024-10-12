@@ -26,6 +26,13 @@ jobs:
   CI-Build:
     runs-on: ubuntu-latest
     steps:
+      - name: Print Environment
+        run: |
+          echo "Deploying to ${{ env.ENVIRONMENT }} environment"
+          echo "DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}"
+          echo "DOCKER_REGISTRY_URL: ${{ env.DOCKER_REGISTRY_URL }}"
+          exit 1
+
       - name: Checkout code
         uses: actions/checkout@v4
 
