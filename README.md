@@ -61,7 +61,7 @@ This method is more recommended. After the script file is downloaded, it can be 
 
 
 **Tips:**
-- The main branch is used as the download source in the above example. In actual use, it is recommended to download the stable version of the script through a specific version tag to ensure compatibility and stability.
+- It is recommended to download the stable version of the script through a specific version tag to ensure compatibility and stability.
 - If you are running on a domestic server, it is recommended to use a [domestic mirror](https://gitee.com/jefferyjob/deployments) to increase download speed.
 
 
