@@ -25,6 +25,7 @@ env:
 jobs:
   CI-Build:
     runs-on: ubuntu-latest
+    environment: TESTING  # 指定环境
     steps:
       - name: Print Environment
         run: |
