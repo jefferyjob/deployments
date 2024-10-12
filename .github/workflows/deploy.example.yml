@@ -73,7 +73,10 @@ jobs:
           EOF
           )
           
-          curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/feature/before_after_func/scripts/deploy.docker.sh
+          # 部署
+          deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/${{ github.ref_name }}/scripts/deploy.docker.sh"
+          echo "deploy_docker_url: $deploy_docker_url"
+          curl -o deploy.sh $deploy_docker_url
           chmod +x deploy.sh
           ./deploy.sh key deploy
 
