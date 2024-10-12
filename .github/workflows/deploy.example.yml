@@ -4,28 +4,26 @@ on:
   push:
     branches:
       - main
-      - master
+      - feature/before_after_func
+#  pull_request:
+#    branches:
+#      - main
 
 env:
-  # Docker 账户
-  DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+  DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
-  # Docker 镜像地址
-  DOCKER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/example_namespace/example_image"
+  DOCKER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/example-namespace/example-deployments"
   DOCKER_IMAGE_TAG: ""
-  # Docker 容器启动配置
-  CONTAINER_NAME: "example_container"
-  DOCKER_RUN_PARAMS: "-p 91:80 -e APP_ENV=example"
-  # 服务器
-  SERVER_HOST: ${{ secrets.SERVER_HOST }}
-  SERVER_USER: ${{ secrets.SERVER_USER }}
+  CONTAINER_NAME: "example-deployments"
+  DOCKER_RUN_PARAMS: "-p 88:80 -e APP_ENV=example"
+  SERVER_HOST: ${{ env.SERVER_HOST }}
+  SERVER_USER: ${{ env.SERVER_USER }}
   SERVER_SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
 jobs:
   CI-Build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -41,13 +39,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Run PHP syntax check
-        run: find . -type f -name "*.php" -exec php -l {} \; | tee php-syntax-check.log
-
-      - name: Build Docker image
-        run: |
-          docker build -t ${{ env.DOCKER_IMAGE }} .
-
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -55,19 +46,31 @@ jobs:
           password: ${{ env.DOCKER_PASSWORD }}
           registry: ${{ env.DOCKER_REGISTRY_URL }} # 私有镜像仓库，需要配置此地址
 
-      - name: Push Docker image
-        run: |
-          docker tag ${{ env.DOCKER_IMAGE }} ${{ env.DOCKER_IMAGE }}:latest
-          docker push ${{ env.DOCKER_IMAGE }}:latest
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./tests/Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:latest
 
 
   CD-Deploy:
     needs: CI-Build
     runs-on: ubuntu-latest
-
     steps:
       - name: Deploy to server
         run: |
+          export BEFORE_FUNC=$(cat <<'EOF'
+            echo "I am before function"
+          EOF
+          )
+          
+          export AFTER_FUNC=$(cat <<'EOF'
+            echo "I am after function"
+          EOF
+          )
+          
           curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
           chmod +x deploy.sh
           ./deploy.sh key deploy
