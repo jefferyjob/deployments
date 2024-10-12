@@ -10,15 +10,15 @@ on:
 #      - main
 
 env:
-  DOCKER_USERNAME: ${{ env.DOCKER_USERNAME }}
+  DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
   DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
   DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
   DOCKER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/example-namespace/example-deployments"
   DOCKER_IMAGE_TAG: ""
   CONTAINER_NAME: "example-deployments"
   DOCKER_RUN_PARAMS: "-p 88:80 -e APP_ENV=example"
-  SERVER_HOST: ${{ env.SERVER_HOST }}
-  SERVER_USER: ${{ env.SERVER_USER }}
+  SERVER_HOST: ${{ vars.SERVER_HOST }}
+  SERVER_USER: ${{ vars.SERVER_USER }}
   SERVER_SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
 
 jobs:
