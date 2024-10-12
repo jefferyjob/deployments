@@ -46,14 +46,14 @@ EOF
 ### Running the Script
 **Method 1: Run the deployment script directly without downloading**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
+curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/tags/v1.1.0/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
 This method is suitable for temporary execution. It does not need to save the script file locally and directly passes it to bash for execution through the curl pipeline.
 
 
 **Method 2: Run the deployment script after downloading (recommended)**
 ```bash
-curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/tags/v1.1.0/scripts/deploy.docker.sh
 chmod +x deploy.sh
 ./deploy.sh <AUTH_METHOD> <ACTION>
 ```

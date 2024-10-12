@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
@@ -74,8 +75,16 @@ jobs:
           
           
           # 部署
-          deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/feature/before_after_func/scripts/deploy.docker.sh"
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+          echo "branch name: $BRANCH"
+          
+          deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/$BRANCH/scripts/deploy.docker.sh"
           echo "deploy_docker_url: $deploy_docker_url"
+          
           curl -o deploy.sh $deploy_docker_url
           chmod +x deploy.sh
           ./deploy.sh key deploy

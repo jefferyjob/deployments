@@ -45,14 +45,14 @@ EOF
 ### 脚本运行
 **方法1: 不下载直接运行部署脚本**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
+curl -fsSL https://gitee.com/jefferyjob/deployments/raw/v1.1.0/scripts/deploy.docker.sh | bash -s -- <AUTH_METHOD> <ACTION>
 ```
 此方法适用于临时执行，不需要将脚本文件保留到本地，直接通过 curl 管道传递给 bash 执行。
 
 
 **方法2:  下载后运行部署脚本（推荐）**
 ```bash
-curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+curl -o deploy.sh https://gitee.com/jefferyjob/deployments/raw/v1.1.0/scripts/deploy.docker.sh
 chmod +x deploy.sh
 ./deploy.sh <AUTH_METHOD> <ACTION>
 ```
