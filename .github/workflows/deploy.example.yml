@@ -73,7 +73,7 @@ jobs:
           EOF
           )
           
-          curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/main/scripts/deploy.docker.sh
+          curl -o deploy.sh https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/feature/before_after_func/scripts/deploy.docker.sh
           chmod +x deploy.sh
           ./deploy.sh key deploy
 
