@@ -50,6 +50,9 @@ print_env() {
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
   echo "--------------------------------------------------------------------------"
+  [[ -n "$BEFORE_FUNC" ]] && echo "  BEFORE_FUNC: $BEFORE_FUNC"
+  [[ -n "$AFTER_FUNC" ]] && echo "  AFTER_FUNC: $AFTER_FUNC"
+  echo "--------------------------------------------------------------------------"
   echo "  AUTH_METHOD: $AUTH_METHOD"
   echo "  ACTION: $ACTION"
   echo "--------------------------------------------------------------------------"
@@ -160,11 +163,11 @@ deploy_pwd_server() {
 
 # 远程服务器上执行的部署逻辑
 deploy_server() {
-  # 确保脚本遇到错误时退出
-  set -e
+  set -e # 确保脚本遇到错误时退出
+  sudo -i # 切换到root用户
 
-  # 切换到root用户
-  sudo -i
+  # 部署前运行脚本
+  deploy_before_func
 
   # 备份现有的容器和镜像
   deploy_backup_container
@@ -179,6 +182,9 @@ deploy_server() {
 
   # 如果部署成功，删除备份镜像并清理系统
   deploy_cleanup
+
+  # 部署后运行脚本
+  deploy_after_func
 }
 
 # 读取并导出所需的环境变量
@@ -191,12 +197,15 @@ export_env_vars() {
   export DOCKER_IMAGE_TAG='$DOCKER_IMAGE_TAG'; \
   export CONTAINER_NAME='$CONTAINER_NAME'; \
   export DOCKER_RUN_PARAMS='$DOCKER_RUN_PARAMS'; \
+  export BEFORE_FUNC='$BEFORE_FUNC'; \
+  export AFTER_FUNC='$AFTER_FUNC'; \
   "
 }
 
 # 登陆Docker镜像仓库
 deploy_login_docker() {
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
+    echo "未配置 DOCKER_REGISTRY_URL 跳过登陆Docker镜像仓库"
     return
   fi
 
@@ -210,6 +219,7 @@ deploy_login_docker() {
 # 退出登陆Docker镜像仓库
 deploy_logout_docker() {
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
+    echo "未配置 DOCKER_REGISTRY_URL 跳过退出登陆Docker镜像仓库"
     return
   fi
 
@@ -293,6 +303,25 @@ deploy_cleanup() {
   sudo docker system prune -f || true
 }
 
+deploy_before_func() {
+  if [[ -z "$BEFORE_FUNC" ]]; then
+    echo "未配置 BEFORE_FUNC 方法，跳过执行"
+    return
+  fi
+
+  echo "准备运行 BEFORE_FUN 方法..."
+  eval "$BEFORE_FUNC"
+}
+
+deploy_after_func() {
+  if [[ -z "$AFTER_FUNC" ]]; then
+    echo "未配置 AFTER_FUNC 方法，跳过执行"
+    return
+  fi
+
+  echo "准备运行 AFTER_FUNC 方法..."
+  eval "$AFTER_FUNC"
+}
 
 ######################################################################
 # Docker 服务部署

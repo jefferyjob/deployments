@@ -3,6 +3,12 @@
 test: ## 语法错误检测
 	shellcheck -e SC2046 -e SC2317 scripts/*.sh
 
+.PHONY:docker
+docker: ## 测试Docker容器服务
+	docker build -f tests/Dockerfile -t example-deployments .
+	docker stop example-deployments || true
+	docker rm example-deployments || true
+	docker run -d -p 8080:80 --name example-deployments example-deployments
 
 .PHONY:help
 .DEFAULT_GOAL:=help

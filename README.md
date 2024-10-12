@@ -30,6 +30,18 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 | DOCKER_RUN_PARAMS | No | Additional run parameters passed when starting the container (e.g. `-e ENV=prod`), which can include environment variables, port mappings, etc. |
 | SERVER_PASSWORD | No | Server login password (e.g., `mypassword`), only used when `AUTH_METHOD` is `pwd`. |
 | SERVER_SSH_PRIVATE_KEY | No | SSH private key content (e.g., `-----BEGIN PRIVATE KEY-----`), used for key login to the server, only used when `AUTH_METHOD` is `key`. |
+| BEFORE_FUNC | No | Run script before deployment |
+| AFTER_FUNC | No | Run script after deployment |
+
+`BEFORE_FUNC` and `AFTER_FUNC` example code
+
+```bash
+BEFORE_FUNC=$(cat <<'EOF'
+echo "I am before function"
+EOF
+)
+```
+
 
 ### Running the Script
 **Method 1: Run the deployment script directly without downloading**
