@@ -65,11 +65,13 @@ jobs:
         run: |
           export BEFORE_FUNC=$(cat <<'EOF'
             echo "I am before function"
+            sudo touch /data/aaa.txt
           EOF
           )
           
           export AFTER_FUNC=$(cat <<'EOF'
             echo "I am after function"
+            sudo touch /data/aaa_bbb.txt
           EOF
           )
           

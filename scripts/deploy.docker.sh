@@ -310,7 +310,7 @@ deploy_before_func() {
   fi
 
   echo "准备运行 BEFORE_FUN 方法..."
-  $BEFORE_FUNC
+  eval "$BEFORE_FUNC"
 }
 
 deploy_after_func() {
@@ -320,7 +320,7 @@ deploy_after_func() {
   fi
 
   echo "准备运行 AFTER_FUNC 方法..."
-  $AFTER_FUNC
+  eval "$AFTER_FUNC"
 }
 
 ######################################################################
