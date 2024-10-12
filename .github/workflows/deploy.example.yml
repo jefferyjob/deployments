@@ -4,10 +4,9 @@ on:
   push:
     branches:
       - main
-      - feature/before_after_func
-#  pull_request:
-#    branches:
-#      - main
+  pull_request:
+    branches:
+      - main
 
 env:
   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
@@ -65,13 +64,11 @@ jobs:
         run: |
           export BEFORE_FUNC=$(cat <<'EOF'
             echo "I am before function"
-            sudo touch /data/aaa.txt
           EOF
           )
           
           export AFTER_FUNC=$(cat <<'EOF'
             echo "I am after function"
-            sudo touch /data/aaa_bbb.txt
           EOF
           )
           
