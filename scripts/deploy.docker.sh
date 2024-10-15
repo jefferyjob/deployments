@@ -181,7 +181,7 @@ deploy_server() {
   deploy_logout_docker
 
   # 如果部署成功，删除备份镜像并清理系统
-  deploy_cleanup
+  # deploy_cleanup
 
   # 部署后运行脚本
   deploy_after_func
@@ -299,8 +299,10 @@ deploy_rollback() {
 # 清理未使用的镜像和容器
 deploy_cleanup() {
   echo "清理备份镜像和未使用的资源..."
+  # 清理备份的容器
   sudo docker rmi "$DOCKER_IMAGE":backup || true
-  sudo docker system prune -f || true
+  # 删除所有未使用的容器、网络、镜像（未被容器引用）和构建缓存
+  sudo docker system prune -a -f || true
 }
 
 deploy_before_func() {
