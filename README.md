@@ -37,7 +37,7 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 
 ```bash
 BEFORE_FUNC=$(cat <<'EOF'
-echo "I am before function"
+  echo "I am before function"
 EOF
 )
 ```
