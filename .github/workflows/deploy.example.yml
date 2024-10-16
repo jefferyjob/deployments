@@ -17,9 +17,9 @@ env:
   DOCKER_IMAGE_TAG: ""
   CONTAINER_NAME: "example-deployments"
   DOCKER_RUN_PARAMS: "-p 88:80 -e APP_ENV=example"
-  SERVER_HOST: ${{ vars.SERVER_HOST }}
-  SERVER_USER: ${{ vars.SERVER_USER }}
-  SERVER_SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+  # SERVER_HOST: ${{ vars.SERVER_HOST }}
+  # SERVER_USER: ${{ vars.SERVER_USER }}
+  # SERVER_SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
 jobs:
   CI-Build:
@@ -87,5 +87,5 @@ jobs:
           
           curl -o deploy.sh $deploy_docker_url
           chmod +x deploy.sh
-          ./deploy.sh key deploy
+          ./deploy.sh skip deploy
 
