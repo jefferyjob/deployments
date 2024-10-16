@@ -1,5 +1,6 @@
 #!/bin/bash
 set -e
+
 AUTH_METHOD="$1"
 ACTION="$2"
 
@@ -141,7 +142,7 @@ deploy_key_server() {
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
 
-  ssh -o StrictHostKeyChecking=no "$SERVER_USER@$SERVER_HOST" \
+  ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$SERVER_USER@$SERVER_HOST" \
     "$EXPORTED_ENV_VARS
     $(typeset -f); $action_func"
 }
@@ -154,7 +155,7 @@ deploy_pwd_server() {
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
 
-  sshpass -p "$SERVER_PASSWORD" ssh -t -o StrictHostKeyChecking=no \
+  sshpass -p "$SERVER_PASSWORD" ssh -t -o StrictHostKeyChecking=no -o ConnectTimeout=10 \
     "$SERVER_USER@$SERVER_HOST" \
     "$EXPORTED_ENV_VARS
     $(typeset -f); $action_func"
