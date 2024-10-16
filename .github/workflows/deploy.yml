@@ -1,0 +1,91 @@
+name: Deploy CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+env:
+  DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
+  DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+  DOCKER_REGISTRY_URL: "registry.cn-hangzhou.aliyuncs.com" # 示例：阿里云私有镜像仓库
+  DOCKER_IMAGE: "registry.cn-hangzhou.aliyuncs.com/example-namespace/example-deployments"
+  DOCKER_IMAGE_TAG: ""
+  CONTAINER_NAME: "example-deployments"
+  DOCKER_RUN_PARAMS: "-p 88:80 -e APP_ENV=example"
+  SERVER_HOST: ${{ vars.SERVER_HOST }}
+  SERVER_USER: ${{ vars.SERVER_USER }}
+  SERVER_SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+
+jobs:
+  CI-Build:
+    runs-on: ubuntu-latest
+    environment: testing  # 指定环境
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKER_USERNAME }}
+          password: ${{ env.DOCKER_PASSWORD }}
+          registry: ${{ env.DOCKER_REGISTRY_URL }} # 私有镜像仓库，需要配置此地址
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./tests/Dockerfile
+          push: true
+          tags: ${{ env.DOCKER_IMAGE }}:latest
+
+
+  CD-Deploy:
+    needs: CI-Build
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+      - name: Deploy to server
+        run: |
+          export BEFORE_FUNC=$(cat <<'EOF'
+            echo "I am before function"
+          EOF
+          )
+          
+          export AFTER_FUNC=$(cat <<'EOF'
+            echo "I am after function"
+          EOF
+          )
+          
+          
+          # 部署
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+          echo "branch name: $BRANCH"
+          
+          deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/$BRANCH/scripts/deploy.docker.sh"
+          echo "deploy_docker_url: $deploy_docker_url"
+          
+          curl -o deploy.sh $deploy_docker_url
+          chmod +x deploy.sh
+          ./deploy.sh skip deploy
+
