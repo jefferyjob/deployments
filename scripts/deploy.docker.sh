@@ -300,44 +300,47 @@ deploy_stop_container() {
 #}
 
 # 拉取最新镜像
-# 返回 1 表示成功，返回 0 表示失败
+# 返回 0 表示成功，返回 1 表示失败
 deploy_pull_container() {
   echo "拉取最新镜像..."
   if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
     echo "拉取新镜像失败."
-    return 0
+    return 1
   fi
 
-  return 1
+  # 成功返回
+  return 0
 }
 
 # 启动最新镜像
-# 返回 1 表示成功，返回 0 表示失败
+# 返回 0 表示成功，返回 1 表示失败
 deploy_run_container() {
   echo "启动新容器..."
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
     echo "启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
-    return 0
+    return 1
   fi
 
-  return 1
+  # 成功返回
+  return 0
 }
 
 # 检查容器健康状态
-# 返回 1 表示成功，返回 0 表示失败
+# 返回 0 表示成功，返回 1 表示失败
 deploy_health_container() {
   echo "容器健康状态检查..."
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
       echo "容器未启动成功. Status: $HEALTH_STATUS"
-      return 0
+      return 1
   fi
 
   echo "Docker镜像部署成功"
 
-  return 1
+  # 成功返回
+  return 0
 }
 
 
