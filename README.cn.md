@@ -62,7 +62,7 @@ chmod +x deploy.sh
 
 **Tips:** 
 - 建议通过特定的版本 Tag 下载稳定版本的脚本，以确保兼容性和稳定性。
-- 如果您在国内服务器运行，推荐使用 [国内镜像](https://gitee.com/jefferyjob/deployments) 以提高下载速度。
+- 如果您在中国境内服务器运行，推荐使用 [镜像加速](https://gitee.com/jefferyjob/deployments) 以提高下载速度。
 
 
 #### 参数
