@@ -18,20 +18,20 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 
 ### Environment Variables Configuration
 | Variable Name | Required | Description |
-|------------------------|-----|-----------------------------------------------------------------------------------|
-| DOCKER_IMAGE | Yes | Docker image address, including image name and tag (e.g., `example_namespace/myapp`), used to pull and start the specified application container. |
-| CONTAINER_NAME | Yes | Docker container name (e.g., `my_container`), uniquely identifies the container in Docker to ensure that it does not conflict with other containers. |
-| SERVER_HOST | Yes | The host name or IP address of the remote server (e.g., `192.168.1.100`), used to connect to the target server via SSH. |
-| SERVER_USER | Yes | Server login username (e.g., `root`), ensure that the user has the permission to operate Docker. |
-| DOCKER_USERNAME | No | Docker repository login account (e.g. `mydockeruser`), used to pull images from private image repositories. |
-| DOCKER_PASSWORD | No | Docker repository login password (e.g. `secret_password`), used with `DOCKER_USERNAME` for private image authentication. |
-| DOCKER_REGISTRY_URL | No | Docker repository URL (e.g. `https://index.docker.io/v1`), if empty, Docker Hub is used by default. |
-| DOCKER_IMAGE_TAG | No | Image version tag to deploy (e.g. `latest`), defaults to `latest`, used to specify the version of the Docker image. |
-| DOCKER_RUN_PARAMS | No | Additional run parameters passed when starting the container (e.g. `-e ENV=prod`), which can include environment variables, port mappings, etc. |
-| SERVER_PASSWORD | No | Server login password (e.g., `mypassword`), only used when `AUTH_METHOD` is `pwd`. |
-| SERVER_SSH_PRIVATE_KEY | No | SSH private key content (e.g., `-----BEGIN PRIVATE KEY-----`), used for key login to the server, only used when `AUTH_METHOD` is `key`. |
-| BEFORE_FUNC | No | Run script before deployment |
-| AFTER_FUNC | No | Run script after deployment |
+|-----------------------|-----|-----------------------------------------------------------------------------------|
+| DOCKER_IMAGE | Yes | Docker image address used to pull and start the specified application container. (Example: `example_ns/myapp` or private configuration `registry.cn-hangzhou.aliyuncs.com/example_ns/myapp`)
+| CONTAINER_NAME | Yes | Docker container name, ensuring it doesn't conflict with other containers. (Example: `my_container`)
+| DOCKER_IMAGE_TAG | No | Version tag for image and container deployment, used to specify the Docker image version, defaults to `latest`.
+| DOCKER_RUN_PARAMS | No | Additional runtime parameters passed when starting the container, which may include environment variables, port mappings, folder mappings, etc. (Example: `-e ENV=prod -e TZ=Asia/Shanghai`) |
+| DOCKER_REGISTRY_URL | No | The URL of the Docker private repository. If empty, the official DockerHub is used by default. (Example: `registry.cn-hangzhou.aliyuncs.com`) |
+| DOCKER_USERNAME | No | The login account for the Docker private repository, used to pull images from the private image repository. |
+| DOCKER_PASSWORD | No | The login password for the Docker private repository, used for authenticating private images. |
+| BEFORE_FUNC | No | A pre-deployment hook function used to execute certain shell commands before deployment. (e.g., creating a log directory, pausing traffic, entering maintenance mode) |
+| AFTER_FUNC | No | A post-deployment hook function used to execute certain shell commands after deployment. (e.g., restoring traffic, preheating cache, notifying the team) |
+| SERVER_HOST | No | The server's hostname or IP address, used to connect to the target server via SSH. Required when `AUTH_METHOD` is `pwd` or `key`. (Example: `192.168.1.100`) |
+| SERVER_USER | No | The server login username. Ensure this user has permission to operate Docker. Required when `AUTH_METHOD` is `pwd` or `key`. (Example: `root`) |
+| SERVER_PASSWORD | No | The server login password. Required when `AUTH_METHOD` is `pwd`. (Example: `mypassword`) |
+| SERVER_SSH_PRIVATE_KEY | No | The server's SSH private key, used for key-based login to the server. Required when `AUTH_METHOD` is a `key`. (Example: `-----BEGIN PRIVATE KEY----- xxx`)
 
 `BEFORE_FUNC` and `AFTER_FUNC` example code
 
@@ -62,7 +62,7 @@ This method is more recommended. After the script file is downloaded, it can be 
 
 **Tips:**
 - It is recommended to download the stable version of the script through a specific version tag to ensure compatibility and stability.
-- If you are running on a domestic server, it is recommended to use a [domestic mirror](https://gitee.com/jefferyjob/deployments) to increase download speed.
+- If your server is located in China, we recommend using [Mirror Acceleration](https://gitee.com/jefferyjob/deployments) to improve download speed.
 
 
 #### Parameters
