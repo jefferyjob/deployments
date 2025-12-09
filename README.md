@@ -18,20 +18,20 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 
 ### Environment Variables Configuration
 | Variable Name | Required | Description |
-|------------------------|-----|-----------------------------------------------------------------------------------|
-| DOCKER_IMAGE | Yes | Docker image address, including image name and tag (e.g., `example_namespace/myapp`), used to pull and start the specified application container. |
-| CONTAINER_NAME | Yes | Docker container name (e.g., `my_container`), uniquely identifies the container in Docker to ensure that it does not conflict with other containers. |
-| SERVER_HOST | Yes | The host name or IP address of the remote server (e.g., `192.168.1.100`), used to connect to the target server via SSH. |
-| SERVER_USER | Yes | Server login username (e.g., `root`), ensure that the user has the permission to operate Docker. |
-| DOCKER_USERNAME | No | Docker repository login account (e.g. `mydockeruser`), used to pull images from private image repositories. |
-| DOCKER_PASSWORD | No | Docker repository login password (e.g. `secret_password`), used with `DOCKER_USERNAME` for private image authentication. |
-| DOCKER_REGISTRY_URL | No | Docker repository URL (e.g. `https://index.docker.io/v1`), if empty, Docker Hub is used by default. |
-| DOCKER_IMAGE_TAG | No | Image version tag to deploy (e.g. `latest`), defaults to `latest`, used to specify the version of the Docker image. |
-| DOCKER_RUN_PARAMS | No | Additional run parameters passed when starting the container (e.g. `-e ENV=prod`), which can include environment variables, port mappings, etc. |
-| SERVER_PASSWORD | No | Server login password (e.g., `mypassword`), only used when `AUTH_METHOD` is `pwd`. |
-| SERVER_SSH_PRIVATE_KEY | No | SSH private key content (e.g., `-----BEGIN PRIVATE KEY-----`), used for key login to the server, only used when `AUTH_METHOD` is `key`. |
-| BEFORE_FUNC | No | Run script before deployment |
-| AFTER_FUNC | No | Run script after deployment |
+|-----------------------|-----|-----------------------------------------------------------------------------------|
+| DOCKER_IMAGE | Yes | Docker image address used to pull and start the specified application container. (e.g., `example_ns/myapp`)
+| CONTAINER_NAME | Yes | Docker container name, ensuring it doesn't conflict with other containers. (e.g., `my_container`)
+| DOCKER_IMAGE_TAG | No | Version tag for image and container deployment, used to specify the version of the Docker image. (e.g., `latest`), defaults to `latest`.
+| DOCKER_RUN_PARAMS | No | Additional runtime parameters passed when starting the container (e.g., `-e ENV=prod`), which can include environment variables, port mappings, folder mappings, etc.
+| DOCKER_REGISTRY_URL | No | URL address of the Docker private repository. If empty, the official Docker Hub is used by default. (e.g., `https://index.docker.io/v1`) |
+| DOCKER_USERNAME | No | Login account for the Docker private repository, used to pull images from the private image repository. |
+| DOCKER_PASSWORD | No | Login password for the Docker private repository, used for authenticating private images. |
+| BEFORE_FUNC | No | Pre-deployment hook function, used to execute certain shell commands before deployment. (e.g., create log directory, pause traffic, enter maintenance mode) |
+| AFTER_FUNC | No | Post-deployment hook function, used to execute certain shell commands after deployment. (e.g., restore traffic, warm up cache, notify the team) |
+| SERVER_HOST | No | Server hostname or IP address, used to connect to the target server via SSH. Required when `AUTH_METHOD` is `pwd` or `key`. (e.g., `192.168.1.100`) |
+| SERVER_USER | No | Server login username. Ensure this user has permission to operate Docker. Required when `AUTH_METHOD` is `pwd` or `key`. (e.g., `root`) |
+| SERVER_PASSWORD | No | Server login password. Required when `AUTH_METHOD` is `pwd`. (e.g., `mypassword`) |
+| SERVER_SSH_PRIVATE_KEY | No | Server SSH private key content, used for key-based login to the server. Required when `AUTH_METHOD` is `key`. (e.g., `-----BEGIN PRIVATE KEY-----`) |
 
 `BEFORE_FUNC` and `AFTER_FUNC` example code
 
