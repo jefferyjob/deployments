@@ -27,7 +27,7 @@ jobs:
     environment: testing  # 指定环境
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Cache Docker layers
         uses: actions/cache@v3
