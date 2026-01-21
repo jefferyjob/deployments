@@ -170,15 +170,35 @@ deploy_server() {
   # 部署前运行脚本
   deploy_before_func
 
+  # 登陆Docker镜像仓库
+  deploy_login_docker
+
   # 备份现有的容器和镜像
   deploy_backup_container
+
+  # 拉取最新镜像
+  if ! deploy_pull_container; then
+    exit 1
+  fi
 
   # 如果存在则停止并删除现有容器
   deploy_stop_container
 
-  # 拉取最新的 Docker 镜像并部署
-  deploy_login_docker
-  deploy_new_container
+  # 启动最新镜像（失败则回滚）
+  if ! deploy_run_container; then
+    echo "启动新容器失败，回滚到上一个版本."
+    deploy_rollback
+    exit 1
+  fi
+
+  # 检查容器健康状态（失败则回滚）
+  if ! deploy_health_container; then
+    echo "容器健康检查失败，回滚到上一个版本."
+    deploy_rollback
+    exit 1
+  fi
+
+  # 退出登陆 Docker 仓库
   deploy_logout_docker
 
   # 如果部署成功，删除备份镜像并清理系统
@@ -251,35 +271,50 @@ deploy_stop_container() {
   sudo docker rm "$CONTAINER_NAME" || true
 }
 
-# 拉取最新镜像并部署新容器
-deploy_new_container() {
+# 拉取最新镜像
+# 返回 0 表示成功，返回 1 表示失败
+deploy_pull_container() {
   echo "拉取最新镜像..."
   if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
-    echo "拉取新镜像失败，回滚到上一个版本."
-    deploy_rollback
+    echo "拉取新镜像失败."
+    return 1
   fi
 
-  echo "启动新容器..."
+  # 成功返回
+  return 0
+}
 
+# 启动最新镜像
+# 返回 0 表示成功，返回 1 表示失败
+deploy_run_container() {
+  echo "启动新容器..."
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
-    echo "无法启动新容器，回滚到上一个版本."
-    echo "错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
-    deploy_rollback
+    echo "启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
+    return 1
   fi
 
-  echo "容器健康状态检查..."
+  # 成功返回
+  return 0
+}
 
-  # 检查容器健康状态
+# 检查容器健康状态
+# 返回 0 表示成功，返回 1 表示失败
+deploy_health_container() {
+  echo "容器健康状态检查..."
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
       echo "容器未启动成功. Status: $HEALTH_STATUS"
-      deploy_rollback
+      return 1
   fi
 
   echo "Docker镜像部署成功"
+
+  # 成功返回
+  return 0
 }
+
 
 # 镜像回滚方法
 deploy_rollback() {
