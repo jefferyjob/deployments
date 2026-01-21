@@ -61,7 +61,7 @@ jobs:
 
   CD-Deploy:
     needs: CI-Build
-    if: github.event_name == 'workflow_dispatch'
+    if: ${{ github.event_name == 'workflow_dispatch' }}  # 仅在手动触发时执行
     runs-on: ubuntu-latest
     environment: testing
     steps:
