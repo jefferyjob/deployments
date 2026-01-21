@@ -34,25 +34,37 @@ graph TD
 
 %%  服务部署流程
     SelectAction --> |AUTH_METHOD=deploy| Deploy[执行部署流程]
+    %% 部署前执行脚本
     Deploy --> RunBeforeFunc[执行部署前脚本<br/>BEFORE_FUNC]
-    RunBeforeFunc --> BackupContainers[备份现有容器]
-    BackupContainers --> StopDeleteOldContainers[停止并删除现有容器]
-    StopDeleteOldContainers --> CheckPrivateRegistry{是否配置了<br/>私有镜像仓库}
-    CheckPrivateRegistry -->|是| LoginDockerRegistry[登录Docker镜像仓库]
-    CheckPrivateRegistry -->|否| PullLatestImage[拉取最新Docker镜像]
-    LoginDockerRegistry --> PullLatestImage
-    PullLatestImage -->|拉取失败| Rollback{执行回滚操作}
-    PullLatestImage -->|拉取成功| StartNewContainer[启动新容器]
-    StartNewContainer -->|启动失败| Rollback
-    StartNewContainer -->|启动成功| CheckHealthStatus{检查容器健康状态}
-    CheckHealthStatus -->|状态不正常| Rollback
-    CheckHealthStatus -->|状态正常| LogoutDockerRegistry[退出Docker镜像仓库]
+    RunBeforeFunc --> CheckPrivateRegistry{是否配置了<br/>私有镜像仓库}
+    %% 登陆Docker镜像仓库
+    CheckPrivateRegistry -->|是| LoginDocker{登录Docker镜像仓库}
+    LoginDocker -->|登录失败| ShowErrorInfo[显示错误信息]
+    %% 备份现有的容器和镜像
+    CheckPrivateRegistry -->|否| BackupContainers[备份现有容器]
+    LoginDocker -->|登录成功| BackupContainers
+    %% 拉取最新镜像
+    BackupContainers --> PullLatestImage{拉取最新Docker镜像}
+    PullLatestImage --> |拉取失败| ShowErrorInfo[显示错误信息]
+    %% 停止并删除现有容器
+    PullLatestImage --> |拉取成功| StopDeleteOldContainers[停止并删除现有容器]
+    %% 启动最新镜像
+    StopDeleteOldContainers --> StartNewContainer{启动新容器}
+    StartNewContainer --> |启动失败| Rollback
+    %% 检查容器健康状态
+    StartNewContainer --> |启动成功| CheckHealthStatus{检查容器健康状态}
+    CheckHealthStatus --> |状态不正常| Rollback
+    %% 退出登陆docker镜像仓库
+    CheckHealthStatus --> |状态正常| LogoutDockerRegistry[退出Docker镜像仓库]
+    %% 部署后执行脚本
     LogoutDockerRegistry --> RunAfterFunc[执行部署后脚本<br/>AFTER_FUNC]
+    %% 部署成功
     RunAfterFunc --> ShowDeploySuccess[显示部署成功信息]
-    
-    
-    Rollback -->|回滚成功| ShowRollbackSuccess[显示回滚成功信息]
+
+
     Rollback -->|回滚失败| ShowErrorInfo[显示错误信息]
+    Rollback -->|回滚成功| ShowRollbackSuccess[显示回滚成功信息]
+    
 
 
     ShowHelp --> End[结束]
@@ -72,5 +84,5 @@ graph TD
 
     class Start,End startend;
     class ErrorExit,ShowErrorInfo error;
-    class CheckParams,IsDockerImageTag,SelectAuthMethod,SelectAction,CheckPrivateRegistry,CheckHealthStatus,CheckHealthStatus,Rollback decision;
+    class CheckParams,IsDockerImageTag,SelectAuthMethod,SelectAction,CheckPrivateRegistry,CheckHealthStatus,CheckHealthStatus,Rollback,LoginDocker,PullLatestImage,StartNewContainer decision;
 ```
