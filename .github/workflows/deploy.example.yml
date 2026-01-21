@@ -75,7 +75,6 @@ jobs:
           EOF
           )
           
-          
           # 部署
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
             BRANCH="${{ github.head_ref }}"
@@ -91,3 +90,29 @@ jobs:
           chmod +x deploy.sh
           ./deploy.sh skip deploy
 
+      - name: Deploy to server (Simulate the second execution)
+        run: |
+          export BEFORE_FUNC=$(cat <<'EOF'
+            echo "I am before function 2"
+          EOF
+          )
+          
+          export AFTER_FUNC=$(cat <<'EOF'
+            echo "I am after function 2"
+          EOF
+          )
+          
+          # 部署
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            BRANCH="${{ github.head_ref }}"
+          else
+            BRANCH="${{ github.ref_name }}"
+          fi
+          echo "branch name: $BRANCH"
+          
+          deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/$BRANCH/scripts/deploy.docker.sh"
+          echo "deploy_docker_url: $deploy_docker_url"
+          
+          curl -o deploy.sh $deploy_docker_url
+          chmod +x deploy.sh
+          ./deploy.sh skip deploy
