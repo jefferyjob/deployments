@@ -347,6 +347,8 @@ deploy_healthcheck() {
     return 0
   fi
 
+  echo "部署URL健康检查, 开始执行..."
+
   # 参数定义
   local interval=1 # 重试间隔时间（秒）
 
