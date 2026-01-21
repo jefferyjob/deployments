@@ -69,7 +69,7 @@ jobs:
           export AFTER_FUNC="$(cat scripts/after_func.sh)"
           
           # 获取当前分支名称
-          export BRANCH="$(bash scripts/get-branch.sh)"
+          BRANCH="$(bash scripts/get-branch.sh)"
           echo "branch name: $BRANCH"
           
           # 部署流程
