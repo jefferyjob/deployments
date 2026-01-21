@@ -65,25 +65,14 @@ jobs:
     steps:
       - name: Deploy to server
         run: |
-          export BEFORE_FUNC=$(cat <<'EOF'
-            echo "I am before function"
-          EOF
-          )
+          export BEFORE_FUNC="$(cat scripts/before_func.sh)"
+          export AFTER_FUNC="$(cat scripts/after_func.sh)"
           
-          export AFTER_FUNC=$(cat <<'EOF'
-            echo "I am after function"
-          EOF
-          )
-          
-          
-          # 部署
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            BRANCH="${{ github.head_ref }}"
-          else
-            BRANCH="${{ github.ref_name }}"
-          fi
+          # 获取当前分支名称
+          export BRANCH="$(bash scripts/get-branch.sh)"
           echo "branch name: $BRANCH"
           
+          # 部署流程
           deploy_docker_url="https://raw.githubusercontent.com/jefferyjob/deployments/refs/heads/$BRANCH/scripts/deploy.docker.sh"
           echo "deploy_docker_url: $deploy_docker_url"
           
