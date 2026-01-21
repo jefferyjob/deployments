@@ -1,7 +1,7 @@
 name: Deploy CI/CD By Server
 
 on:
-  workflow_dispatch: # 手动触发
+  workflow_dispatch: # 手动触发 eee
   push:
     branches:
       - main
