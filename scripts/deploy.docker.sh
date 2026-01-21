@@ -49,7 +49,9 @@ print_env() {
   echo "  DOCKER_IMAGE: $DOCKER_IMAGE"
   echo "  DOCKER_IMAGE_TAG: $DOCKER_IMAGE_TAG"
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
+  echo "  DOCKER_STOP_GRACE_PERIOD: $DOCKER_STOP_GRACE_PERIOD"
   echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
+  echo "  HEALTHCHECK_URL: $HEALTHCHECK_URL"
   echo "--------------------------------------------------------------------------"
   [[ -n "$BEFORE_FUNC" ]] && echo "  BEFORE_FUNC: $BEFORE_FUNC"
   [[ -n "$AFTER_FUNC" ]] && echo "  AFTER_FUNC: $AFTER_FUNC"
@@ -198,6 +200,13 @@ deploy_server() {
     exit 1
   fi
 
+  # 部署URL健康检查（失败则回滚）
+  if ! deploy_healthcheck; then
+    echo "部署URL健康检查失败，回滚到上一个版本."
+    deploy_rollback
+    exit 1
+  fi
+
   # 退出登陆 Docker 仓库
   deploy_logout_docker
 
@@ -267,7 +276,23 @@ deploy_backup_container() {
 # 停止并删除现有容器
 deploy_stop_container() {
   echo "停止并删除现有容器..."
-  sudo docker stop "$CONTAINER_NAME" || true
+
+  # 容器不存在直接返回
+  if ! sudo docker inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
+    echo "容器不存在，跳过停止: $CONTAINER_NAME"
+    return 0
+  fi
+
+  # 停止容器（优先使用优雅退出时间）
+  if [[ -n "$DOCKER_STOP_GRACE_PERIOD" ]]; then
+    echo "使用优雅停止时间 ${DOCKER_STOP_GRACE_PERIOD}s 停止容器: $CONTAINER_NAME"
+    sudo docker stop -t "$DOCKER_STOP_GRACE_PERIOD" "$CONTAINER_NAME" || true
+  else
+    echo "使用默认方式停止容器: $CONTAINER_NAME"
+    sudo docker stop "$CONTAINER_NAME" || true
+  fi
+
+  # 删除容器
   sudo docker rm "$CONTAINER_NAME" || true
 }
 
@@ -315,6 +340,29 @@ deploy_health_container() {
   return 0
 }
 
+# 部署健康检查
+deploy_healthcheck() {
+  if [[ -z "$HEALTHCHECK_URL" ]]; then
+    echo "未配置 HEALTHCHECK_URL 健康检查，跳过执行"
+    return 0
+  fi
+
+  # 参数定义
+  local interval=1 # 重试间隔时间（秒）
+
+  for ((i=1; i<=3; i++)); do
+    if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
+     echo "部署URL健康检查成功: $HEALTHCHECK_URL"
+      return 0
+    fi
+
+    echo "健康检查第 $i 次失败，${interval}s 后重试..."
+    sleep "$interval"
+  done
+
+  echo "部署URL健康检查失败: $HEALTHCHECK_URL"
+  return 1
+}
 
 # 镜像回滚方法
 deploy_rollback() {
@@ -397,8 +445,6 @@ case $AUTH_METHOD in
 esac
 
 
-
-
 ######################################################################
 # CD Deployments 执行完毕
 ######################################################################
@@ -415,4 +461,3 @@ log_notice() {
   echo -e "\033[0;36m $1 \033[0m"
 }
 log_info "🚀🚀🚀 CD Deployment 执行完毕"
-
