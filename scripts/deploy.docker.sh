@@ -174,7 +174,7 @@ deploy_pwd_server() {
 # 远程服务器上执行的部署逻辑
 deploy_server() {
   set -e # 确保脚本遇到错误时退出
-  sudo -i # 切换到root用户
+  # sudo -i # 切换到root用户
 
   # 部署前运行脚本
   log_begin
