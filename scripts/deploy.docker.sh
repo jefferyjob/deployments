@@ -418,7 +418,7 @@ deploy_before_func() {
   fi
 
   echo "准备运行 BEFORE_FUN 方法..."
-  eval "$BEFORE_FUNC"
+  sudo bash -c "set -e; $BEFORE_FUNC"
 }
 
 deploy_after_func() {
@@ -428,7 +428,7 @@ deploy_after_func() {
   fi
 
   echo "准备运行 AFTER_FUNC 方法..."
-  eval "$AFTER_FUNC"
+  sudo bash -c "set -e; $AFTER_FUNC"
 }
 
 ######################################################################
