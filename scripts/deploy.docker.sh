@@ -170,18 +170,26 @@ deploy_server() {
   sudo -i # 切换到root用户
 
   # 部署前运行脚本
+  log_begin
   deploy_before_func
+  log_end
 
   # 登陆Docker镜像仓库
+  log_begin
   deploy_login_docker
+  log_end
 
   # 备份现有的容器和镜像
+  log_begin
   deploy_backup_container
+  log_end
 
   # 拉取最新镜像
+  log_begin
   if ! deploy_pull_container; then
     exit 1
   fi
+  log_end
 
   # 如果存在则停止并删除现有容器
   deploy_stop_container
@@ -452,6 +460,12 @@ esac
 ######################################################################
 # CD Deployments 执行完毕
 ######################################################################
+log_begin() {
+  echo "[==============================>] [$(date '+%F %T')] BEGIN"
+}
+log_end() {
+  echo "[<==============================] [$(date '+%F %T')] END"
+}
 log_info() {
   echo -e "\033[0;32m\033[1m $1 \033[0m"
 }
