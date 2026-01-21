@@ -1,7 +1,6 @@
 name: Deploy CI/CD By Server
 
 on:
-  workflow_dispatch: # 手动触发
   push:
     branches:
       - main
@@ -9,6 +8,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # 手动触发
 
 env:
   DOCKER_USERNAME: ${{ vars.DOCKER_USERNAME }}
