@@ -447,7 +447,7 @@ case $AUTH_METHOD in
     fi
     ;;
   *)
-    echo "Error: Invalid AUTH_METHOD provided."
+    echo "[ERROR] Invalid AUTH_METHOD provided."
     exit 1
     ;;
 esac
