@@ -357,15 +357,15 @@ deploy_healthcheck() {
 
   for ((i=1; i<=3; i++)); do
     if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
-      echo "部署URL健康检查成功: $HEALTHCHECK_URL"
+      echo -e "\n部署URL健康检查成功: $HEALTHCHECK_URL"
       return 0
     fi
 
-    echo "健康检查第 $i 次失败，${interval}s 后重试..."
+    echo -e "\n健康检查第 $i 次失败，${interval}s 后重试..."
     sleep "$interval"
   done
 
-  echo "[ERROR] 部署URL健康检查失败: $HEALTHCHECK_URL"
+  echo -e "\n[ERROR] 部署URL健康检查失败: $HEALTHCHECK_URL"
   return 1
 }
 
