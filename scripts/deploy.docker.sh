@@ -75,13 +75,13 @@ fi
 
 # 检查服务器授权方式
 if [[ "$AUTH_METHOD" != "pwd" && "$AUTH_METHOD" != "key" && "$AUTH_METHOD" != "skip" ]]; then
-  echo "Error: AUTH_METHOD parameter validation error."
+  echo "[ERROR] AUTH_METHOD parameter validation error."
   exit 1
 fi
 
 # 检查执行动作
 if [[ "$ACTION" != "deploy" && "$ACTION" != "remove" ]]; then
-  echo "Error: ACTION parameter validation error."
+  echo "[ERROR] ACTION parameter validation error."
   exit 1
 fi
 
@@ -89,7 +89,7 @@ check_param() {
   local param_name="$1"
   local param_value="$2"
   if [[ -z "$param_value" ]]; then
-    echo "Error: $param_name The environment variable parameter cannot be empty"
+    echo "[ERROR] $param_name The environment variable parameter cannot be empty"
     exit 1
   fi
 }
@@ -114,7 +114,7 @@ fi
 
 # DOCKER_REGISTRY_URL 被配置了则 DOCKER_USERNAME 和 DOCKER_PASSWORD 必须被配置
 if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD") ]]; then
-    echo "Error: 环境变量中，设置 DOCKER_REGISTRY_URL 时 DOCKER_USERNAME 和 DOCKER_PASSWORD 不能为空"
+    echo "[ERROR] 环境变量中，设置 DOCKER_REGISTRY_URL 时 DOCKER_USERNAME 和 DOCKER_PASSWORD 不能为空"
     exit 1
 fi
 
@@ -242,7 +242,7 @@ deploy_login_docker() {
   fi
 
   if ! echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"; then
-    echo "Error: Docker登陆镜像仓库失败"
+    echo "[ERROR] 登陆Docker镜像仓库失败"
     exit 1
   fi
 }
@@ -301,7 +301,7 @@ deploy_stop_container() {
 deploy_pull_container() {
   echo "[=== BEGIN ===] 拉取最新镜像..."
   if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
-    echo "拉取新镜像失败."
+    echo "[ERROR] 拉取新镜像失败."
     return 1
   fi
 
@@ -315,13 +315,13 @@ deploy_run_container() {
   echo "[=== BEGIN ===] 启动新容器..."
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
-    echo "启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
+    echo "[ERROR] 启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
     return 1
   fi
 
   echo "镜像名称: $DOCKER_IMAGE:$DOCKER_IMAGE_TAG"
-  echo "容器启动参数: $DOCKER_RUN_PARAMS"
   echo "容器名称: $CONTAINER_NAME"
+  echo "启动参数: $DOCKER_RUN_PARAMS"
 
   # 成功返回
   return 0
@@ -334,7 +334,7 @@ deploy_health_container() {
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
-      echo "容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
+      echo "[ERROR] 容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
       return 1
   fi
 
@@ -365,7 +365,7 @@ deploy_healthcheck() {
     sleep "$interval"
   done
 
-  echo "部署URL健康检查失败: $HEALTHCHECK_URL"
+  echo "[ERROR] 部署URL健康检查失败: $HEALTHCHECK_URL"
   return 1
 }
 
@@ -383,7 +383,7 @@ deploy_rollback() {
     echo "镜像回滚成功"
     exit 1
   else
-    echo "镜像回滚失败"
+    echo "[ERROR] 镜像回滚失败"
     exit 1
   fi
 }
