@@ -216,7 +216,7 @@ deploy_server() {
   deploy_after_func
 }
 
-# 读取并导出所需的环境变量
+# 导出环境变量给远程
 export_env_vars() {
   echo "
   export DOCKER_USERNAME='$DOCKER_USERNAME'; \
@@ -375,13 +375,13 @@ deploy_rollback() {
 
   if [[ "$BACKUP_IMAGE_EXISTS" == 0 ]]; then
     echo "没有备份镜像，无法回滚"
-    exit 1
+    exit 0
   fi
 
   # shellcheck disable=SC2086
   if sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:backup; then
     echo "镜像回滚成功"
-    exit 1
+    exit 0
   else
     echo "[ERROR] 镜像回滚失败"
     exit 1
@@ -421,7 +421,7 @@ deploy_after_func() {
 }
 
 ######################################################################
-# Docker 服务部署
+# Docker 服务部署执行动作
 ######################################################################
 case $AUTH_METHOD in
   key) # 密钥登陆服务器
