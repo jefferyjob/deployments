@@ -126,18 +126,12 @@ echo "--------------------------------------------------------------------------
 echo "All parameters have been validated and are ready to continue execution... "
 echo "--------------------------------------------------------------------------"
 
-log_begin() {
-  echo "[==================================================================] BEGIN"
-}
-log_end() {
-  echo "[==================================================================] END"
-  echo ""
-}
-
 ######################################################################
 # Docker 服务部署
 ######################################################################
 deploy_key_server() {
+  echo "[=== BEGIN ===] 执行远程服务器部署流程..."
+
   local action_func="$1"
 
   echo "启动SSH代理并添加私钥..."
@@ -146,8 +140,6 @@ deploy_key_server() {
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
   ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-
-  echo "[=== BEGIN ===] 执行远程服务器部署流程..."
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -158,9 +150,9 @@ deploy_key_server() {
 }
 
 deploy_pwd_server() {
-  local action_func="$1"
-
   echo "[=== BEGIN ===] 执行远程服务器部署流程..."
+
+  local action_func="$1"
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -327,6 +319,10 @@ deploy_run_container() {
     return 1
   fi
 
+  echo "镜像名称: $DOCKER_IMAGE:$DOCKER_IMAGE_TAG"
+  echo "容器启动参数: $DOCKER_RUN_PARAMS"
+  echo "容器名称: $CONTAINER_NAME"
+
   # 成功返回
   return 0
 }
@@ -338,11 +334,11 @@ deploy_health_container() {
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
-      echo "容器未启动成功. Status: $HEALTH_STATUS"
+      echo "容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
       return 1
   fi
 
-  echo "Docker镜像部署成功"
+  echo "容器健康状态检查成功"
 
   # 成功返回
   return 0
@@ -350,13 +346,11 @@ deploy_health_container() {
 
 # 部署健康检查
 deploy_healthcheck() {
-  echo "[=== BEGIN ===] 部署健康检查..."
+  echo "[=== BEGIN ===] 部署健康状态检查..."
   if [[ -z "$HEALTHCHECK_URL" ]]; then
     echo "未配置 HEALTHCHECK_URL 健康检查，跳过执行"
     return 0
   fi
-
-  echo "部署URL健康检查, 开始执行..."
 
   # 参数定义
   local interval=1 # 重试间隔时间（秒）
@@ -397,6 +391,7 @@ deploy_rollback() {
 # 清理未使用的镜像和容器
 deploy_cleanup() {
   echo "[=== BEGIN ===] 清理备份镜像和未使用的资源..."
+
   # 清理备份的容器
   sudo docker rmi "$DOCKER_IMAGE":backup || true
   # 删除所有未使用的容器、网络、镜像（未被容器引用）和构建缓存
@@ -405,6 +400,7 @@ deploy_cleanup() {
 
 deploy_before_func() {
   echo "[=== BEGIN ===] 运行 BEFORE_FUN 方法..."
+
   if [[ -z "$BEFORE_FUNC" ]]; then
     echo "未配置 BEFORE_FUNC 方法，跳过执行"
     return
@@ -415,6 +411,7 @@ deploy_before_func() {
 
 deploy_after_func() {
   echo "[=== BEGIN ===] 运行 AFTER_FUNC 方法..."
+
   if [[ -z "$AFTER_FUNC" ]]; then
     echo "未配置 AFTER_FUNC 方法，跳过执行"
     return
