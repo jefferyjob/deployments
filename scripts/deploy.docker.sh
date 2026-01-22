@@ -357,7 +357,7 @@ deploy_healthcheck() {
 
   for ((i=1; i<=3; i++)); do
     if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
-     echo "部署URL健康检查成功: $HEALTHCHECK_URL"
+      echo "部署URL健康检查成功: $HEALTHCHECK_URL"
       return 0
     fi
 
