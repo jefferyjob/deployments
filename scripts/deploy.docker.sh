@@ -404,22 +404,22 @@ deploy_cleanup() {
 }
 
 deploy_before_func() {
+  echo "【准备】运行 BEFORE_FUN 方法..."
   if [[ -z "$BEFORE_FUNC" ]]; then
     echo "未配置 BEFORE_FUNC 方法，跳过执行"
     return
   fi
 
-  echo "准备运行 BEFORE_FUN 方法..."
   sudo bash -c "set -e; $BEFORE_FUNC"
 }
 
 deploy_after_func() {
+  echo "【准备】运行 AFTER_FUNC 方法..."
   if [[ -z "$AFTER_FUNC" ]]; then
     echo "未配置 AFTER_FUNC 方法，跳过执行"
     return
   fi
 
-  echo "准备运行 AFTER_FUNC 方法..."
   sudo bash -c "set -e; $AFTER_FUNC"
 }
 
