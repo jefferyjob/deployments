@@ -75,13 +75,13 @@ fi
 
 # 检查服务器授权方式
 if [[ "$AUTH_METHOD" != "pwd" && "$AUTH_METHOD" != "key" && "$AUTH_METHOD" != "skip" ]]; then
-  echo "Error: AUTH_METHOD parameter validation error."
+  echo "[ERROR] AUTH_METHOD parameter validation error."
   exit 1
 fi
 
 # 检查执行动作
 if [[ "$ACTION" != "deploy" && "$ACTION" != "remove" ]]; then
-  echo "Error: ACTION parameter validation error."
+  echo "[ERROR] ACTION parameter validation error."
   exit 1
 fi
 
@@ -89,7 +89,7 @@ check_param() {
   local param_name="$1"
   local param_value="$2"
   if [[ -z "$param_value" ]]; then
-    echo "Error: $param_name The environment variable parameter cannot be empty"
+    echo "[ERROR] $param_name The environment variable parameter cannot be empty"
     exit 1
   fi
 }
@@ -114,7 +114,7 @@ fi
 
 # DOCKER_REGISTRY_URL 被配置了则 DOCKER_USERNAME 和 DOCKER_PASSWORD 必须被配置
 if [[ -n "$DOCKER_REGISTRY_URL" && (-z "$DOCKER_USERNAME" || -z "$DOCKER_PASSWORD") ]]; then
-    echo "Error: 环境变量中，设置 DOCKER_REGISTRY_URL 时 DOCKER_USERNAME 和 DOCKER_PASSWORD 不能为空"
+    echo "[ERROR] 环境变量中，设置 DOCKER_REGISTRY_URL 时 DOCKER_USERNAME 和 DOCKER_PASSWORD 不能为空"
     exit 1
 fi
 
@@ -130,6 +130,8 @@ echo "--------------------------------------------------------------------------
 # Docker 服务部署
 ######################################################################
 deploy_key_server() {
+  echo "[=== BEGIN ===] 执行远程服务器部署流程..."
+
   local action_func="$1"
 
   echo "启动SSH代理并添加私钥..."
@@ -138,8 +140,6 @@ deploy_key_server() {
   mkdir -p ~/.ssh
   chmod 700 ~/.ssh
   ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
-
-  echo "执行远程服务器部署流程..."
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -150,9 +150,9 @@ deploy_key_server() {
 }
 
 deploy_pwd_server() {
-  local action_func="$1"
+  echo "[=== BEGIN ===] 执行远程服务器部署流程..."
 
-  echo "执行远程服务器部署流程..."
+  local action_func="$1"
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -167,7 +167,6 @@ deploy_pwd_server() {
 # 远程服务器上执行的部署逻辑
 deploy_server() {
   set -e # 确保脚本遇到错误时退出
-  sudo -i # 切换到root用户
 
   # 部署前运行脚本
   deploy_before_func
@@ -217,7 +216,7 @@ deploy_server() {
   deploy_after_func
 }
 
-# 读取并导出所需的环境变量
+# 导出环境变量给远程
 export_env_vars() {
   echo "
   export DOCKER_USERNAME='$DOCKER_USERNAME'; \
@@ -236,32 +235,32 @@ export_env_vars() {
 
 # 登陆Docker镜像仓库
 deploy_login_docker() {
+  echo "[=== BEGIN ===] 登陆Docker镜像仓库..."
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
     echo "未配置 DOCKER_REGISTRY_URL 跳过登陆Docker镜像仓库"
     return
   fi
 
-  echo "登陆Docker镜像仓库..."
   if ! echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"; then
-    echo "Error: Docker登陆镜像仓库失败"
+    echo "[ERROR] 登陆Docker镜像仓库失败"
     exit 1
   fi
 }
 
 # 退出登陆Docker镜像仓库
 deploy_logout_docker() {
+  echo "[=== BEGIN ===] 退出登陆Docker镜像仓库..."
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
     echo "未配置 DOCKER_REGISTRY_URL 跳过退出登陆Docker镜像仓库"
     return
   fi
 
-  echo "退出登陆Docker镜像仓库..."
   sudo docker logout "$DOCKER_REGISTRY_URL" || true
 }
 
 # 备份现有的容器
 deploy_backup_container() {
-  echo "备份现有容器..."
+  echo "[=== BEGIN ===] 备份现有容器..."
   BACKUP_IMAGE_EXISTS=0
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     # 若容器存在，则使用 docker commit 创建备份镜像
@@ -277,8 +276,7 @@ deploy_backup_container() {
 
 # 停止并删除现有容器
 deploy_stop_container() {
-  echo "停止并删除现有容器..."
-
+  echo "[=== BEGIN ===] 停止并删除现有容器..."
   # 容器不存在直接返回
   if ! sudo docker inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
     echo "容器不存在，跳过停止: $CONTAINER_NAME"
@@ -301,9 +299,9 @@ deploy_stop_container() {
 # 拉取最新镜像
 # 返回 0 表示成功，返回 1 表示失败
 deploy_pull_container() {
-  echo "拉取最新镜像..."
+  echo "[=== BEGIN ===] 拉取最新镜像..."
   if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
-    echo "拉取新镜像失败."
+    echo "[ERROR] 拉取新镜像失败."
     return 1
   fi
 
@@ -314,12 +312,16 @@ deploy_pull_container() {
 # 启动最新镜像
 # 返回 0 表示成功，返回 1 表示失败
 deploy_run_container() {
-  echo "启动新容器..."
+  echo "[=== BEGIN ===] 启动新容器..."
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
-    echo "启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
+    echo "[ERROR] 启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
     return 1
   fi
+
+  echo "镜像名称: $DOCKER_IMAGE:$DOCKER_IMAGE_TAG"
+  echo "容器名称: $CONTAINER_NAME"
+  echo "启动参数: $DOCKER_RUN_PARAMS"
 
   # 成功返回
   return 0
@@ -328,15 +330,15 @@ deploy_run_container() {
 # 检查容器健康状态
 # 返回 0 表示成功，返回 1 表示失败
 deploy_health_container() {
-  echo "容器健康状态检查..."
+  echo "[=== BEGIN ===] 容器健康状态检查..."
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
-      echo "容器未启动成功. Status: $HEALTH_STATUS"
+      echo "[ERROR] 容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
       return 1
   fi
 
-  echo "Docker镜像部署成功"
+  echo "容器健康状态检查成功"
 
   # 成功返回
   return 0
@@ -344,52 +346,52 @@ deploy_health_container() {
 
 # 部署健康检查
 deploy_healthcheck() {
+  echo "[=== BEGIN ===] 部署健康状态检查..."
   if [[ -z "$HEALTHCHECK_URL" ]]; then
     echo "未配置 HEALTHCHECK_URL 健康检查，跳过执行"
     return 0
   fi
-
-  echo "部署URL健康检查, 开始执行..."
 
   # 参数定义
   local interval=1 # 重试间隔时间（秒）
 
   for ((i=1; i<=3; i++)); do
     if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
-     echo "部署URL健康检查成功: $HEALTHCHECK_URL"
+      echo -e "\n部署URL健康检查成功: $HEALTHCHECK_URL"
       return 0
     fi
 
-    echo "健康检查第 $i 次失败，${interval}s 后重试..."
+    echo -e "\n健康检查第 $i 次失败，${interval}s 后重试..."
     sleep "$interval"
   done
 
-  echo "部署URL健康检查失败: $HEALTHCHECK_URL"
+  echo -e "\n[ERROR] 部署URL健康检查失败: $HEALTHCHECK_URL"
   return 1
 }
 
 # 镜像回滚方法
 deploy_rollback() {
-  echo "镜像回滚..."
+  echo "[=== BEGIN ===] 镜像回滚..."
 
   if [[ "$BACKUP_IMAGE_EXISTS" == 0 ]]; then
     echo "没有备份镜像，无法回滚"
-    exit 1
+    exit 0
   fi
 
   # shellcheck disable=SC2086
   if sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:backup; then
     echo "镜像回滚成功"
-    exit 1
+    exit 0
   else
-    echo "镜像回滚失败"
+    echo "[ERROR] 镜像回滚失败"
     exit 1
   fi
 }
 
 # 清理未使用的镜像和容器
 deploy_cleanup() {
-  echo "清理备份镜像和未使用的资源..."
+  echo "[=== BEGIN ===] 清理备份镜像和未使用的资源..."
+
   # 清理备份的容器
   sudo docker rmi "$DOCKER_IMAGE":backup || true
   # 删除所有未使用的容器、网络、镜像（未被容器引用）和构建缓存
@@ -397,27 +399,29 @@ deploy_cleanup() {
 }
 
 deploy_before_func() {
+  echo "[=== BEGIN ===] 运行 BEFORE_FUN 方法..."
+
   if [[ -z "$BEFORE_FUNC" ]]; then
     echo "未配置 BEFORE_FUNC 方法，跳过执行"
     return
   fi
 
-  echo "准备运行 BEFORE_FUN 方法..."
-  eval "$BEFORE_FUNC"
+  sudo bash -c "set -e; $BEFORE_FUNC"
 }
 
 deploy_after_func() {
+  echo "[=== BEGIN ===] 运行 AFTER_FUNC 方法..."
+
   if [[ -z "$AFTER_FUNC" ]]; then
     echo "未配置 AFTER_FUNC 方法，跳过执行"
     return
   fi
 
-  echo "准备运行 AFTER_FUNC 方法..."
-  eval "$AFTER_FUNC"
+  sudo bash -c "set -e; $AFTER_FUNC"
 }
 
 ######################################################################
-# Docker 服务部署
+# Docker 服务部署执行动作
 ######################################################################
 case $AUTH_METHOD in
   key) # 密钥登陆服务器
@@ -443,7 +447,7 @@ case $AUTH_METHOD in
     fi
     ;;
   *)
-    echo "Error: Invalid AUTH_METHOD provided."
+    echo "[ERROR] Invalid AUTH_METHOD provided."
     exit 1
     ;;
 esac
