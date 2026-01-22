@@ -147,7 +147,7 @@ deploy_key_server() {
   chmod 700 ~/.ssh
   ssh-keyscan -H "$SERVER_HOST" >> ~/.ssh/known_hosts
 
-  echo "执行远程服务器部署流程..."
+  echo "【准备】执行远程服务器部署流程..."
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -160,7 +160,7 @@ deploy_key_server() {
 deploy_pwd_server() {
   local action_func="$1"
 
-  echo "执行远程服务器部署流程..."
+  echo "【准备】执行远程服务器部署流程..."
 
   # 读取本机环境变量
   EXPORTED_ENV_VARS=$(export_env_vars)
@@ -175,29 +175,20 @@ deploy_pwd_server() {
 # 远程服务器上执行的部署逻辑
 deploy_server() {
   set -e # 确保脚本遇到错误时退出
-  # sudo -i # 切换到root用户
 
   # 部署前运行脚本
-  log_begin
   deploy_before_func
-  log_end
 
   # 登陆Docker镜像仓库
-  log_begin
   deploy_login_docker
-  log_end
 
   # 备份现有的容器和镜像
-  log_begin
   deploy_backup_container
-  log_end
 
   # 拉取最新镜像
-  log_begin
   if ! deploy_pull_container; then
     exit 1
   fi
-  log_end
 
   # 如果存在则停止并删除现有容器
   deploy_stop_container
@@ -252,12 +243,12 @@ export_env_vars() {
 
 # 登陆Docker镜像仓库
 deploy_login_docker() {
+  echo "【准备】登陆Docker镜像仓库..."
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
     echo "未配置 DOCKER_REGISTRY_URL 跳过登陆Docker镜像仓库"
     return
   fi
 
-  echo "登陆Docker镜像仓库..."
   if ! echo "$DOCKER_PASSWORD" | sudo docker login --username "$DOCKER_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"; then
     echo "Error: Docker登陆镜像仓库失败"
     exit 1
@@ -266,18 +257,18 @@ deploy_login_docker() {
 
 # 退出登陆Docker镜像仓库
 deploy_logout_docker() {
+  echo "【准备】退出登陆Docker镜像仓库..."
   if [[ -z "$DOCKER_REGISTRY_URL" ]]; then
     echo "未配置 DOCKER_REGISTRY_URL 跳过退出登陆Docker镜像仓库"
     return
   fi
 
-  echo "退出登陆Docker镜像仓库..."
   sudo docker logout "$DOCKER_REGISTRY_URL" || true
 }
 
 # 备份现有的容器
 deploy_backup_container() {
-  echo "备份现有容器..."
+  echo "【准备】备份现有容器..."
   BACKUP_IMAGE_EXISTS=0
   if sudo docker inspect "$CONTAINER_NAME" > /dev/null 2>&1; then
     # 若容器存在，则使用 docker commit 创建备份镜像
@@ -293,8 +284,7 @@ deploy_backup_container() {
 
 # 停止并删除现有容器
 deploy_stop_container() {
-  echo "停止并删除现有容器..."
-
+  echo "【准备】停止并删除现有容器..."
   # 容器不存在直接返回
   if ! sudo docker inspect "$CONTAINER_NAME" >/dev/null 2>&1; then
     echo "容器不存在，跳过停止: $CONTAINER_NAME"
@@ -317,7 +307,7 @@ deploy_stop_container() {
 # 拉取最新镜像
 # 返回 0 表示成功，返回 1 表示失败
 deploy_pull_container() {
-  echo "拉取最新镜像..."
+  echo "【准备】拉取最新镜像..."
   if ! sudo docker pull "$DOCKER_IMAGE":"$DOCKER_IMAGE_TAG"; then
     echo "拉取新镜像失败."
     return 1
@@ -330,7 +320,7 @@ deploy_pull_container() {
 # 启动最新镜像
 # 返回 0 表示成功，返回 1 表示失败
 deploy_run_container() {
-  echo "启动新容器..."
+  echo "【准备】启动新容器..."
   # shellcheck disable=SC2086
   if ! sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:$DOCKER_IMAGE_TAG; then
     echo "启动新容器失败, 错误日志: $(sudo docker logs "$CONTAINER_NAME" 2>&1)"
@@ -344,7 +334,7 @@ deploy_run_container() {
 # 检查容器健康状态
 # 返回 0 表示成功，返回 1 表示失败
 deploy_health_container() {
-  echo "容器健康状态检查..."
+  echo "【准备】容器健康状态检查..."
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
   echo "容器状态: $HEALTH_STATUS"
   if [ "$HEALTH_STATUS" != "running" ]; then
@@ -360,6 +350,7 @@ deploy_health_container() {
 
 # 部署健康检查
 deploy_healthcheck() {
+  echo "【准备】部署健康检查..."
   if [[ -z "$HEALTHCHECK_URL" ]]; then
     echo "未配置 HEALTHCHECK_URL 健康检查，跳过执行"
     return 0
@@ -386,7 +377,7 @@ deploy_healthcheck() {
 
 # 镜像回滚方法
 deploy_rollback() {
-  echo "镜像回滚..."
+  echo "【准备】镜像回滚..."
 
   if [[ "$BACKUP_IMAGE_EXISTS" == 0 ]]; then
     echo "没有备份镜像，无法回滚"
@@ -405,7 +396,7 @@ deploy_rollback() {
 
 # 清理未使用的镜像和容器
 deploy_cleanup() {
-  echo "清理备份镜像和未使用的资源..."
+  echo "【准备】清理备份镜像和未使用的资源..."
   # 清理备份的容器
   sudo docker rmi "$DOCKER_IMAGE":backup || true
   # 删除所有未使用的容器、网络、镜像（未被容器引用）和构建缓存
