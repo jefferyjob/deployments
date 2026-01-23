@@ -334,6 +334,7 @@ deploy_healthcheck() {
       echo "[ERROR] 容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
       return 1
   fi
+  echo -e "容器健康状态检查成功 \n"
 
   # ---------- URL 健康检查（可选） ----------
   if [[ -z "$HEALTHCHECK_URL" ]]; then
@@ -341,23 +342,20 @@ deploy_healthcheck() {
     return 0
   fi
 
-  local retries=3
-  local interval=1
+  local retries=3 # 重试次数
+  local interval=1 # 重试间隔时间（秒）
 
   for ((i=1; i<=retries; i++)); do
-    if curl -sf \
-      --connect-timeout 2 \
-      --max-time 3 \
-      "$HEALTHCHECK_URL"; then
-      echo "服务健康检查成功: $HEALTHCHECK_URL"
+    if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
+      echo -e "\n服务健康检查成功: $HEALTHCHECK_URL"
       return 0
     fi
 
-    echo "健康检查第 $i/$retries 次失败，${interval}s 后重试..."
+    echo -e "\n健康检查第 $i/$retries 次失败，${interval}s 后重试..."
     sleep "$interval"
   done
 
-  echo "[ERROR] 服务健康检查失败: $HEALTHCHECK_URL"
+  echo -e "\n[ERROR] 服务健康检查失败: $HEALTHCHECK_URL"
   return 1
 }
 
