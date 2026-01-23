@@ -187,21 +187,14 @@ deploy_server() {
 
   # 启动最新镜像（失败则回滚）
   if ! deploy_run_container; then
-    echo "启动新容器失败，回滚到上一个版本."
+    echo "启动新容器失败, 回滚到上一个版本."
     deploy_rollback
     exit 1
   fi
 
-  # 检查容器健康状态（失败则回滚）
-  if ! deploy_health_container; then
-    echo "容器健康检查失败，回滚到上一个版本."
-    deploy_rollback
-    exit 1
-  fi
-
-  # 部署URL健康检查（失败则回滚）
+  # 容器和服务健康检查（失败则回滚）
   if ! deploy_healthcheck; then
-    echo "部署URL健康检查失败，回滚到上一个版本."
+    echo "容器和服务健康检查检查失败, 回滚到上一个版本."
     deploy_rollback
     exit 1
   fi
@@ -327,45 +320,44 @@ deploy_run_container() {
   return 0
 }
 
-# 检查容器健康状态
+# 容器 + 服务健康检查
+# 1. 检查容器是否 running
+# 2. 若配置 HEALTHCHECK_URL，则检查服务可用性
 # 返回 0 表示成功，返回 1 表示失败
-deploy_health_container() {
-  echo "[=== BEGIN ===] 容器健康状态检查..."
+deploy_healthcheck() {
+  echo "[=== BEGIN ===] 健康状态检查..."
+
+  # ---------- 容器状态检查 ----------
   HEALTH_STATUS=$(sudo docker inspect --format='{{.State.Status}}' "$CONTAINER_NAME")
-  echo "容器状态: $HEALTH_STATUS"
+  echo "容器状态: ${HEALTH_STATUS:-unknown}"
   if [ "$HEALTH_STATUS" != "running" ]; then
       echo "[ERROR] 容器健康状态检查失败, 容器未启动成功. Status: $HEALTH_STATUS"
       return 1
   fi
 
-  echo "容器健康状态检查成功"
-
-  # 成功返回
-  return 0
-}
-
-# 部署健康检查
-deploy_healthcheck() {
-  echo "[=== BEGIN ===] 部署健康状态检查..."
+  # ---------- URL 健康检查（可选） ----------
   if [[ -z "$HEALTHCHECK_URL" ]]; then
-    echo "未配置 HEALTHCHECK_URL 健康检查，跳过执行"
+    echo "未配置 HEALTHCHECK_URL，跳过服务健康检查"
     return 0
   fi
 
-  # 参数定义
-  local interval=1 # 重试间隔时间（秒）
+  local retries=3
+  local interval=1
 
-  for ((i=1; i<=3; i++)); do
-    if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
-      echo -e "\n部署URL健康检查成功: $HEALTHCHECK_URL"
+  for ((i=1; i<=retries; i++)); do
+    if curl -sf \
+      --connect-timeout 2 \
+      --max-time 3 \
+      "$HEALTHCHECK_URL"; then
+      echo "服务健康检查成功: $HEALTHCHECK_URL"
       return 0
     fi
 
-    echo -e "\n健康检查第 $i 次失败，${interval}s 后重试..."
+    echo "健康检查第 $i/$retries 次失败，${interval}s 后重试..."
     sleep "$interval"
   done
 
-  echo -e "\n[ERROR] 部署URL健康检查失败: $HEALTHCHECK_URL"
+  echo "[ERROR] 服务健康检查失败: $HEALTHCHECK_URL"
   return 1
 }
 
