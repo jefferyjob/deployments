@@ -51,7 +51,7 @@ print_env() {
   echo "  CONTAINER_NAME: $CONTAINER_NAME"
   echo "  DOCKER_STOP_GRACE_PERIOD: $DOCKER_STOP_GRACE_PERIOD"
   echo "  DOCKER_RUN_PARAMS: $DOCKER_RUN_PARAMS"
-  echo "  HEALTHCHECK_URL: $HEALTHCHECK_URL"
+  echo "  HEALTH_URL: $HEALTH_URL"
   echo "--------------------------------------------------------------------------"
   [[ -n "$BEFORE_FUNC" ]] && echo "  BEFORE_FUNC: $BEFORE_FUNC"
   [[ -n "$AFTER_FUNC" ]] && echo "  AFTER_FUNC: $AFTER_FUNC"
@@ -220,7 +220,7 @@ export_env_vars() {
   export CONTAINER_NAME='$CONTAINER_NAME'; \
   export DOCKER_STOP_GRACE_PERIOD='$DOCKER_STOP_GRACE_PERIOD'; \
   export DOCKER_RUN_PARAMS='$DOCKER_RUN_PARAMS'; \
-  export HEALTHCHECK_URL='$HEALTHCHECK_URL'; \
+  export HEALTH_URL='$HEALTH_URL'; \
   export BEFORE_FUNC='$BEFORE_FUNC'; \
   export AFTER_FUNC='$AFTER_FUNC'; \
   "
@@ -322,7 +322,7 @@ deploy_run_container() {
 
 # 容器 + 服务健康检查
 # 1. 检查容器是否 running
-# 2. 若配置 HEALTHCHECK_URL，则检查服务可用性
+# 2. 若配置 HEALTH_URL，则检查服务可用性
 # 返回 0 表示成功，返回 1 表示失败
 deploy_healthcheck() {
   echo "[=== BEGIN ===] 健康状态检查..."
@@ -337,8 +337,8 @@ deploy_healthcheck() {
   echo -e "容器健康状态检查成功 \n"
 
   # ---------- URL 健康检查（可选） ----------
-  if [[ -z "$HEALTHCHECK_URL" ]]; then
-    echo "未配置 HEALTHCHECK_URL，跳过服务健康检查"
+  if [[ -z "$HEALTH_URL" ]]; then
+    echo "未配置 HEALTH_URL，跳过服务健康检查"
     return 0
   fi
 
@@ -346,8 +346,8 @@ deploy_healthcheck() {
   local interval=1 # 重试间隔时间（秒）
 
   for ((i=1; i<=retries; i++)); do
-    if curl -sf --connect-timeout 2 --max-time 3 "$HEALTHCHECK_URL"; then
-      echo -e "\n服务健康检查成功: $HEALTHCHECK_URL"
+    if curl -sf --connect-timeout 2 --max-time 3 "$HEALTH_URL"; then
+      echo -e "\n服务健康检查成功: $HEALTH_URL"
       return 0
     fi
 
@@ -355,7 +355,7 @@ deploy_healthcheck() {
     sleep "$interval"
   done
 
-  echo -e "\n[ERROR] 服务健康检查失败: $HEALTHCHECK_URL"
+  echo -e "\n[ERROR] 服务健康检查失败: $HEALTH_URL"
   return 1
 }
 

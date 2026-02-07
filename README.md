@@ -24,7 +24,7 @@ This project is a neat CD (Continuous Deployment) automated deployment script de
 | DOCKER_IMAGE_TAG | No | Version tag for image and container deployment, used to specify the Docker image version, defaults to `latest`.
 | DOCKER_STOP_GRACE_PERIOD | No | Graceful wait time (in seconds) when the container terminates (docker stop), defaults to `10`. (Example: `30`) |
 | DOCKER_RUN_PARAMS | No | Additional runtime parameters passed when starting the container, which may include environment variables, port mappings, folder mappings, etc. (Example: `-e ENV=prod -e TZ=Asia/Shanghai`) |
-| HEALTHCHECK_URL | No | Health check (Readiness) URL, used to determine whether a newly started container has completed initialization and is capable of providing services. (Example: `http://127.0.0.1/ping`) |
+| HEALTH_URL | No | Health check (Readiness) URL, used to determine whether a newly started container has completed initialization and is capable of providing services. (Example: `http://127.0.0.1/health`) |
 | DOCKER_REGISTRY_URL | No | The URL of the Docker private repository. If empty, the official DockerHub is used by default. (Example: `registry.cn-hangzhou.aliyuncs.com`) |
 | DOCKER_USERNAME | No | The login account for the Docker private repository, used to pull images from the private image repository. |
 | DOCKER_PASSWORD | No | The login password for the Docker private repository, used for authenticating private images. |
