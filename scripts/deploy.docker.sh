@@ -364,9 +364,12 @@ deploy_rollback() {
   echo "[=== BEGIN ===] 镜像回滚..."
 
   if [[ "$BACKUP_IMAGE_EXISTS" == 0 ]]; then
-    echo "没有备份镜像，无法回滚"
-    exit 0
+    echo "[ERROR] 没有备份镜像，无法回滚"
+    exit 1
   fi
+
+  # 停止并删除部署失败的新容器，释放容器名称，避免回滚启动时同名冲突
+  deploy_stop_container
 
   # shellcheck disable=SC2086
   if sudo docker run -d --name $CONTAINER_NAME $DOCKER_RUN_PARAMS $DOCKER_IMAGE:backup; then

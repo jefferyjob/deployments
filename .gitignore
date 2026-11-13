@@ -5,3 +5,9 @@
 .fleet
 *.log
 test
+
+# AI
+.claude
+.agents
+CLAUDE.md
+AGENTS.md
